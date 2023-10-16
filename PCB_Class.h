@@ -18,12 +18,18 @@ class PCB_Class{
         };
 
         queue<PCB> newQueue;
+        queue<PCB> readyQueue;
+        queue<PCB> waitQueue;
 
         PCB_Class();
         ~PCB_Class();
 
         // takes in a PCB line and puts it into a queue
         void loadPCB(string fileLine, queue<PCB>& initialQueue);
+        void pushQueue(PCB block, queue<PCB>& queue);
+        void popQueue(queue<PCB>& queue);
+        PCB getPCB(queue<PCB>& queue);
+        bool queueEmpty(queue<PCB> queue);
         
 
         

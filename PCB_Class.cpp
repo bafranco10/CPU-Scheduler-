@@ -42,3 +42,18 @@ void PCB_Class::loadPCB(string fileLine,queue<PCB>& initialQueue){
 
     initialQueue.push(currentPCB);
 }
+void PCB_Class::pushQueue(PCB block, queue<PCB>& queue){
+    queue.push(block);
+}
+
+void PCB_Class::popQueue(queue<PCB>& queue){
+    queue.pop();
+}
+
+PCB_Class::PCB PCB_Class::getPCB(queue<PCB>& queue){
+    return queue.front();
+}
+
+bool PCB_Class::queueEmpty(queue<PCB> queue){
+    return queue.empty();
+}
