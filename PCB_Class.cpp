@@ -40,7 +40,7 @@ void PCB_Class::loadPCB(string fileLine){
 
     currentPCB.waiting = true;
 
-    pushQueue(currentPCB, newQueue);
+    pushQueue(currentPCB, waitQueue);
 }
 void PCB_Class::pushQueue(PCB block, queue<PCB>& queue){
     queue.push(block);
@@ -54,6 +54,32 @@ PCB_Class::PCB PCB_Class::getPCB(queue<PCB>& queue){
     return queue.front();
 }
 
-bool PCB_Class::queueEmpty(queue<PCB> queue){
+bool PCB_Class::queueEmpty(queue<PCB>& queue){
     return queue.empty();
+}
+
+int PCB_Class::queueSize(queue<PCB>& queue){
+    return queue.size();
+}
+int PCB_Class::skipBlanks(string fileLine, int startPos){
+
+}
+
+int PCB_Class::earliestArrival(queue<PCB>& queue){
+    int size = queueSize(queue);
+    int earliest;
+    PCB block;
+
+    block = getPCB(queue);
+    earliest = block.arrivalTime;
+
+    for(int i=0;i<size;i++){
+        block = getPCB(queue);
+        popQueue(queue);
+        if(block.arrivalTime < earliest){
+            earliest = block.arrivalTime;
+        }
+        pushQueue(block, queue);
+    } 
+    return earliest; 
 }

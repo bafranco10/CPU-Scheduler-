@@ -3,6 +3,7 @@
 // https://cplusplus.com/reference/queue/queue/ 10-15-2023
 
 #include "PCB_Class.h"
+#include "FCFS.h"
 #include <iostream>
 #include <fstream>
 #include <queue>
@@ -29,6 +30,7 @@ bool errorCheck(bool *flags, char **argv, string type, string quanta);
 
 int main(int argc, char **argv){
 		PCB_Class pcb;
+		FCFS fcfs;
 		ifstream inputFile;
 		string fileLine;
 		string type = DEFAULT_TYPE, quanta = DEFAULT_QUANTA, fileName = DEFAULT_FILE;
@@ -42,6 +44,7 @@ int main(int argc, char **argv){
         // check for ----type find TYPE then if found, but not TYPE, error
         // handle no input after type, file, or quanta
         // handle multiple sapces in input file
+        // for file, check if priority is 1-100, if arrival and burst are >0 
 		for(int i=0;i<argc;i++){
             string argument = argv[i];
 			if(argument == TYPE){
@@ -82,15 +85,16 @@ int main(int argc, char **argv){
 			return 0;
 		}
 
-		///*
-		while(!pcb.newQueue.empty()){
-			cout << "\t\n" << pcb.newQueue.front().id;
-			pcb.newQueue.pop();
+		
+		/*
+		while(!pcb.waitQueue.empty()){
+			cout << "\t\nP_" << pcb.waitQueue.front().id;
+			pcb.waitQueue.pop();
 		}
 		//*/
-		
-		if(type==FIRST_COME_FIRST_SERVE){
 
+		if(type==FIRST_COME_FIRST_SERVE){
+			fcfs.startFCFS(flags[VERBOSE_FLAG]);
 		}
 		else if(type==SHORTEST_JOB_FIRST){
 

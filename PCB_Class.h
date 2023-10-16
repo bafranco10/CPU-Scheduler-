@@ -14,12 +14,14 @@ class PCB_Class{
 
         struct PCB{
             int id, priority, burstTime, arrivalTime;
+            int waitTime;
             bool waiting;
         };
 
         queue<PCB> newQueue;
         queue<PCB> readyQueue;
         queue<PCB> waitQueue;
+        queue<PCB> doneQueue;
 
         PCB_Class();
         ~PCB_Class();
@@ -29,7 +31,10 @@ class PCB_Class{
         void pushQueue(PCB block, queue<PCB>& queue);
         void popQueue(queue<PCB>& queue);
         PCB getPCB(queue<PCB>& queue);
-        bool queueEmpty(queue<PCB> queue);
+        bool queueEmpty(queue<PCB>& queue);
+        int queueSize(queue<PCB>& queue);
+
+        int earliestArrival(queue<PCB>& queue);
         
 
         
@@ -37,6 +42,8 @@ class PCB_Class{
 
     private:
         const char BLANK = ' ', UNDERLINE='_';
+
+        int skipBlanks(string fileLine, int startPos);
 
         
 };
