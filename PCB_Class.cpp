@@ -18,7 +18,7 @@ PCB_Class::~PCB_Class()
     //dtor
 }
 
-void PCB_Class::loadPCB(string fileLine,queue<PCB>& initialQueue){
+void PCB_Class::loadPCB(string fileLine){
     size_t preBlank,postBlank;
     PCB currentPCB;
 
@@ -40,7 +40,7 @@ void PCB_Class::loadPCB(string fileLine,queue<PCB>& initialQueue){
 
     currentPCB.waiting = true;
 
-    initialQueue.push(currentPCB);
+    pushQueue(currentPCB, newQueue);
 }
 void PCB_Class::pushQueue(PCB block, queue<PCB>& queue){
     queue.push(block);

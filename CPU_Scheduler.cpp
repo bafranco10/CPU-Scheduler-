@@ -39,6 +39,9 @@ int main(int argc, char **argv){
 		}
 
         // sets flags
+        // check for ----type find TYPE then if found, but not TYPE, error
+        // handle no input after type, file, or quanta
+        // handle multiple sapces in input file
 		for(int i=0;i<argc;i++){
             string argument = argv[i];
 			if(argument == TYPE){
@@ -66,23 +69,38 @@ int main(int argc, char **argv){
 			if(inputFile){
 			    while(!inputFile.eof()){
 			        getline(inputFile, fileLine);
-					pcb.loadPCB(fileLine, pcb.newQueue);
+					pcb.loadPCB(fileLine);
 				}
 				inputFile.close();
 			}
 			else{
 				cout << "\tERROR: File not opened\n";
+				return 0;
 			}
 		}
+		else{
+			return 0;
+		}
 
-		/*
+		///*
 		while(!pcb.newQueue.empty()){
-			cout << "\t\n" << pcb.newQueue.front().priority;
+			cout << "\t\n" << pcb.newQueue.front().id;
 			pcb.newQueue.pop();
 		}
 		//*/
 		
-		//if()
+		if(type==FIRST_COME_FIRST_SERVE){
+
+		}
+		else if(type==SHORTEST_JOB_FIRST){
+
+		}
+		else if(type==PRIORITY){
+
+		}
+		else if(type==ROUND_ROBIN){
+
+		}
 
 
 
@@ -93,7 +111,7 @@ int main(int argc, char **argv){
 // checks that valid inputs were given
 bool errorCheck(bool *flags, char **argv, string type, string quanta){
 	bool error = false;
-	if(flags[PREEMPTIVE_FLAG] && (!flags[TYPE_FLAG] || type == FIRST_COME_FIRST_SERVE)){
+	if(flags[PREEMPTIVE_FLAG] && type == FIRST_COME_FIRST_SERVE){
 		cout << "\tERROR: FCFS cannot be preemptive\n";
 		error = true;
 	}
