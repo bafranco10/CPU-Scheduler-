@@ -1,20 +1,33 @@
-# FILE: makefile
-# A Bautista, Transy U
-# OS, Fall 2023
-#
-# makefile for 
-#
+// roundRobin.h
+// Round Robin Interface
+//Brian Franco Armando Bautista Estefan Mora
 
-CPU_Scheduler: CPU_Scheduler.o PCB_Class.o FCFS.o
-	g++ CPU_Scheduler.o PCB_Class.o FCFS.o -o CPU_Scheduler
-	
-CPU_Scheduler.o: CPU_Scheduler.cpp
-		g++ -c CPU_Scheduler.cpp
+#ifndef ROUNDROBIN_H
+#define ROUNDROBIN_H
 
-PCB_Class.o: PCB_Class.cpp PCB_Class.h
-	g++ -c PCB_Class.cpp
+#include <iostream>
+#include <fstream>
+#include <queue>
+#include "PCB_Class.h" // Include the PCB_Class header
 
-FCFS.o: FCFS.cpp FCFS.h
-	g++ -c FCFS.cpp
+using namespace std;
 
+class roundRobin {
+private:
+    int cpuTime;
+    int timeQuantum;
 
+public:
+    roundRobin(int quantum); // Constructor that takes the time quantum as a parameter
+
+    ~roundRobin(); // Destructor
+
+    void startRoundRobin(bool verbose);
+
+    void printOutput(bool verbose);
+
+    void verboseOutput();
+
+};
+
+#endif // ROUNDROBIN_H
