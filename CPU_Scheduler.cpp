@@ -87,14 +87,14 @@ int main(int argc, char **argv){
 
 		
 		/*
-		while(!pcb.waitQueue.empty()){
-			cout << "\t\nP_" << pcb.waitQueue.front().id;
-			pcb.waitQueue.pop();
+		while(!pcb.queueEmpty(pcb.waitQueue)){
+			cout << "\t\nP_" << pcb.getPCB(pcb.waitQueue).id;
+			pcb.popQueue(pcb.waitQueue);
 		}
 		//*/
 
 		if(type==FIRST_COME_FIRST_SERVE){
-			fcfs.startFCFS(flags[VERBOSE_FLAG]);
+			fcfs.fcfsSchedule(flags[VERBOSE_FLAG],pcb);
 		}
 		else if(type==SHORTEST_JOB_FIRST){
 

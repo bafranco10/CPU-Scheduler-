@@ -13,7 +13,7 @@ class PCB_Class{
         //const int NEW_STATUS=0, READY_STATUS=1,RUNNING_STATUS=2,WAITING_STATUS=3,TERMINATED_STATUS=4;
 
         struct PCB{
-            int id, priority, burstTime, arrivalTime;
+            int pid, priority, burstTime, arrivalTime;
             int waitTime;
             bool waiting;
         };
@@ -34,10 +34,14 @@ class PCB_Class{
         bool queueEmpty(queue<PCB>& queue);
         int queueSize(queue<PCB>& queue);
 
+        // retuns the smallest arrival time within the given queue
         int earliestArrival(queue<PCB>& queue);
-        
 
-        
+        // retuns the smallest pid time within the given queue
+        int smallestPid(queue<PCB>& queue);
+        int shortestJob(queue<PCB>& queue);
+        int highestPriority(queue<PCB>& queue);
+
     protected:
 
     private:

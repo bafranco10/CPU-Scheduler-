@@ -24,7 +24,7 @@ void PCB_Class::loadPCB(string fileLine){
 
     preBlank = fileLine.find(UNDERLINE);
     postBlank = fileLine.find(BLANK,preBlank);
-    currentPCB.id = atoi(fileLine.substr(preBlank+1,postBlank).c_str());
+    currentPCB.pid = atoi(fileLine.substr(preBlank+1,postBlank).c_str());
     
     preBlank = fileLine.find(BLANK,postBlank);
     postBlank = fileLine.find(BLANK,preBlank+1);
@@ -66,12 +66,9 @@ int PCB_Class::skipBlanks(string fileLine, int startPos){
 }
 
 int PCB_Class::earliestArrival(queue<PCB>& queue){
+    PCB block = getPCB(queue);
     int size = queueSize(queue);
-    int earliest;
-    PCB block;
-
-    block = getPCB(queue);
-    earliest = block.arrivalTime;
+    int earliest = block.arrivalTime;
 
     for(int i=0;i<size;i++){
         block = getPCB(queue);
@@ -82,4 +79,59 @@ int PCB_Class::earliestArrival(queue<PCB>& queue){
         pushQueue(block, queue);
     } 
     return earliest; 
+}
+
+int smallestPid(queue<PCB>& queue){
+    PCB block = getPCB(queue);
+    int size = queueSize(queue);
+    int smallest = block.pid;
+
+    block = getPCB(queue);
+    smallest = block.pid;
+
+    for(int i=0;i<size;i++){
+        block = getPCB(queue);
+        popQueue(queue);
+        if(block.pid < smallest){
+            smallest = block.pid;
+        }
+        pushQueue(block, queue);
+    } 
+    return smallest;
+}
+int shortestJob(queue<PCB>& queue){
+    PCB block = getPCB(queue);
+    int size = queueSize(queue);
+    int shortest = block.burstTime;
+
+    block = getPCB(queue);
+    shortest = block.burstTime;
+
+    for(int i=0;i<size;i++){
+        block = getPCB(queue);
+        popQueue(queue);
+        if(block.burstTime < shortest){
+            shortest = block.burstTime;
+        }
+        pushQueue(block, queue);
+    } 
+    return shortest;
+}
+int highestPriority(queue<PCB>& queue){
+    PCB block = getPCB(queue);
+    int size = queueSize(queue);
+    int highest = block.priority;
+
+    block = getPCB(queue);
+    highest = block.priority;
+
+    for(int i=0;i<size;i++){
+        block = getPCB(queue);
+        popQueue(queue);
+        if(block.priority > highest){
+            highest = block.priority;
+        }
+        pushQueue(block, queue);
+    } 
+    return highest;
 }

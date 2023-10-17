@@ -1,6 +1,10 @@
 #include "FCFS.h"
 #include "PCB_Class.h"
 
+
+
+using namespace std;
+
 FCFS::FCFS()
 {
     cpuTime = 0;
@@ -11,22 +15,19 @@ FCFS::~FCFS()
     //dtor
 }
 
-void FCFS::startFCFS(bool verbose){
-    PCB_Class pcb;
+void FCFS::fcfsSchedule(bool verbose, PCB_Class& pcb){
+    //PCB_Class pcb;
     PCB_Class::PCB block;
     int earliestArrival;
 
-   
     while(!pcb.queueEmpty(pcb.waitQueue)){
- cout << "hey0";
 
         block = pcb.getPCB(pcb.waitQueue);
         if(block.arrivalTime <= cpuTime){
-        cout << "\nat" << block.arrivalTime;
             block.waitTime = cpuTime - block.arrivalTime;
-cout << "\nwt" << block.waitTime;
+
             cpuTime += block.burstTime;
-            cout << "\nct" << cpuTime;
+
             pcb.popQueue(pcb.waitQueue);
             pcb.pushQueue(block, pcb.doneQueue);
 
@@ -34,43 +35,44 @@ cout << "\nwt" << block.waitTime;
         else{
             pcb.pushQueue(block, pcb.waitQueue);
             pcb.popQueue(pcb.waitQueue);
+
             earliestArrival = pcb.earliestArrival(pcb.waitQueue);
-            cout << "\nea" << earliestArrival;
             if(earliestArrival > cpuTime){
                 cpuTime = earliestArrival;
             }
         }
     }
-      cout << "hey3";
-    printOutput(verbose);
+    printOutput(verbose, pcb);
     
 }
 
-void FCFS::printOutput(bool verbose){
+void FCFS::printOutput(bool verbose, PCB_Class& pcb){
     
-    if(!verbose){
-        PCB_Class pcb;
-        PCB_Class::PCB block;
-        int totalWait = 0, wait;
-        int processes = pcb.queueSize(pcb.doneQueue);
-        
-        while(!pcb.queueEmpty(pcb.doneQueue)){
-            block = pcb.getPCB(pcb.doneQueue);
-            cout << "\nP_" << block.id;
+    PCB_Class::PCB block;
+    int totalWait = 0, wait;
+    int processes = pcb.queueSize(pcb.doneQueue);
+    
+    while(!pcb.queueEmpty(pcb.doneQueue)){
+        block = pcb.getPCB(pcb.doneQueue);
+        cout << "\nP_" << block.pid;
 
-            wait = block.waitTime;
-            totalWait += wait;
-            cout << "\tWait: " << wait;
+        wait = block.waitTime;
+        totalWait += wait;
+        cout << "\tWait: " << wait;
 
-            pcb.popQueue(pcb.doneQueue);
+        if(verbose){
+            verboseOutput(block);
         }
-        cout << "\n\tAverage Wait: " << (totalWait/(float) processes) << endl;
+
+        pcb.popQueue(pcb.doneQueue);
     }
-    else{
-        verboseOutput();
-    }
+    cout << "\n\tAverage Wait: " << (totalWait/(float) processes) << endl;
+
+        
 }
 
-void FCFS::verboseOutput(void){
-
+void FCFS::verboseOutput(PCB_Class::PCB block){
+    int cpuTime = block.waitTime + block.arrivalTime;
+    cout << " \tCPU Entered: " << cpuTime
+        << " CPU Left: " << (block.burstTime + cpuTime);
 }
