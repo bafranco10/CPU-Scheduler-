@@ -11,8 +11,6 @@ class FCFS{
         FCFS();
         ~FCFS();
 
-        int cpuTime,processes;
-
         // takes in a PCB_Class object and the verbose flag and then schedules a queue using FCFS
         void fcfsSchedule(bool verbose, PCB_Class& pcb);
         

@@ -26,7 +26,10 @@ const string FIRST_COME_FIRST_SERVE="FCFS",SHORTEST_JOB_FIRST="SJF",PRIORITY="Pr
 const string DEFAULT_TYPE=FIRST_COME_FIRST_SERVE,DEFAULT_QUANTA="10",DEFAULT_FILE="sched.in";
 const int FLAGS=5,TYPE_FLAG=0,PREEMPTIVE_FLAG=1,QUANTA_FLAG=2,FILE_FLAG=3,VERBOSE_FLAG=4;
 
+// checks if input is valid and returns false if no errors found
 bool errorCheck(bool *flags, char **argv, string type, string quanta);
+// checks if command line set up is valid and returns false if no isses found
+bool commandCheck(int argc, char**argv);
 
 int main(int argc, char **argv){
 		PCB_Class pcb;
@@ -40,27 +43,25 @@ int main(int argc, char **argv){
 			flags[i]=false;
 		}
 
-        // sets flags
+		if(commandCheck(argc, argv)) return 0;
+
         // check for ----type find TYPE then if found, but not TYPE, error
-        // handle no input after type, file, or quanta
-        // handle multiple sapces in input file
-        // for file, check if priority is 1-100, if arrival and burst are >0 
 		for(int i=0;i<argc;i++){
             string argument = argv[i];
 			if(argument == TYPE){
-                type = argv[i+1];
+				type = argv[i+1];
                 flags[TYPE_FLAG] = true;
 			}
 			if(argument == PREEMPTIVE){
                 flags[PREEMPTIVE_FLAG] = true;
 			}
-			if(argument == QUANTA){
-                quanta = argv[i+1];
-                flags[QUANTA_FLAG] = true;
+			if(argument == QUANTA){			
+				quanta = argv[i+1];
+            	flags[QUANTA_FLAG] = true;              
 			}
 			if(argument == FILE_NAME){
-                fileName = argv[i+1];
-                flags[FILE_FLAG] = true;
+				fileName = argv[i+1];
+            	flags[FILE_FLAG] = true;                
 			}
 			if(argument == VERBOSE){
                 flags[VERBOSE_FLAG] = true;
@@ -72,7 +73,9 @@ int main(int argc, char **argv){
 			if(inputFile){
 			    while(!inputFile.eof()){
 			        getline(inputFile, fileLine);
-					pcb.loadPCB(fileLine);
+					if(!pcb.loadPCB(fileLine)){
+						return 0;
+					}
 				}
 				inputFile.close();
 			}
@@ -85,13 +88,6 @@ int main(int argc, char **argv){
 			return 0;
 		}
 
-		
-		/*
-		while(!pcb.queueEmpty(pcb.waitQueue)){
-			cout << "\t\nP_" << pcb.getPCB(pcb.waitQueue).id;
-			pcb.popQueue(pcb.waitQueue);
-		}
-		//*/
 
 		if(type==FIRST_COME_FIRST_SERVE){
 			fcfs.fcfsSchedule(flags[VERBOSE_FLAG],pcb);
@@ -112,7 +108,6 @@ int main(int argc, char **argv){
 	return 0;
 }
 
-// checks that valid inputs were given
 bool errorCheck(bool *flags, char **argv, string type, string quanta){
 	bool error = false;
 	if(flags[PREEMPTIVE_FLAG] && type == FIRST_COME_FIRST_SERVE){
@@ -136,4 +131,22 @@ bool errorCheck(bool *flags, char **argv, string type, string quanta){
 		error = true;
 	}
 	return error;		
+}
+
+bool commandCheck(int argc, char**argv){
+	bool error = false;
+
+	if(argv[argc-1]==TYPE){
+		cout << "\tERROR: " << TYPE << " requires an input\n";
+		error = true;
+	}
+	else if(argv[argc-1]==TYPE){
+		cout << "\tERROR: " << QUANTA << " requires an input\n";
+		error = true;
+	}
+	else if(argv[argc-1]==TYPE){
+		cout << "\tERROR: " << FILE_NAME << " requires an input\n";
+		error = true;
+	}
+	return error;
 }

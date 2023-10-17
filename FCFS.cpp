@@ -5,20 +5,16 @@
 
 using namespace std;
 
-FCFS::FCFS()
-{
-    cpuTime = 0;
+FCFS::FCFS(){
 }
 
-FCFS::~FCFS()
-{
-    //dtor
+FCFS::~FCFS(){
 }
 
 void FCFS::fcfsSchedule(bool verbose, PCB_Class& pcb){
     //PCB_Class pcb;
     PCB_Class::PCB block;
-    int earliestArrival;
+    int earliestArrival,cpuTime = 0;
 
     while(!pcb.queueEmpty(pcb.waitQueue)){
 
@@ -36,7 +32,7 @@ void FCFS::fcfsSchedule(bool verbose, PCB_Class& pcb){
             pcb.pushQueue(block, pcb.waitQueue);
             pcb.popQueue(pcb.waitQueue);
 
-            earliestArrival = pcb.earliestArrival(pcb.waitQueue);
+            earliestArrival = pcb.earliestArrival(pcb.waitQueue).arrivalTime;
             if(earliestArrival > cpuTime){
                 cpuTime = earliestArrival;
             }
