@@ -59,14 +59,17 @@ void roundRobin::rrSchedule(bool verbose, int quantum, PCB_Class& pcb){
                 block.burstTime -= quantum;
 
                 block.enterTime = cpuTime;
-
                 cpuTime += quantum;
-
+                cout << "exit time" <<block.exitTime <<endl;
+                if (block.arrivalTime > 0 && block.exitCounter == 0 ) {
+                    block.waitTime += block.enterTime - block.exitTime - block.arrivalTime; 
+                }
+                else {
+                block.waitTime += block.enterTime - block.exitTime; 
+                }
+                cout << block.waitTime << " " << block.pid <<endl;
                 block.exitTime = cpuTime;
                 block.exitCounter++;
-
-                block.waitTime += block.exitTime - block.enterTime;
-
                 pcb.pushQueue(block, pcb.waitQueue);
                 pcb.popQueue(pcb.waitQueue);
             } 
@@ -74,12 +77,16 @@ void roundRobin::rrSchedule(bool verbose, int quantum, PCB_Class& pcb){
                 block.enterTime = cpuTime;
 
                 cpuTime += block.burstTime;
-
+                cout << "exit time" <<block.exitTime <<endl;
+                if (block.arrivalTime > 0 && block.exitCounter == 0 ) {
+                    block.waitTime += block.enterTime - block.exitTime - block.arrivalTime; 
+                }
+                else {
+                    block.waitTime += block.enterTime - block.exitTime; 
+                }
+                cout << block.waitTime << " " << block.pid <<endl;
                 block.exitTime = cpuTime;
                 block.exitCounter++;
-
-                block.waitTime += block.exitTime - block.enterTime;
-
                 pcb.popQueue(pcb.waitQueue);
                 pcb.pushQueue(block, pcb.doneQueue);
             }
