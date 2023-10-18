@@ -1,24 +1,23 @@
+// FILE: PCB_Class.cpp
+// A Bautista, Transy U
+// OS, Fall 2023
+//
+// Implementation for PCB_Class that contains all functions needed to access PCBs and queues of PCBs
+//
+
 #include "PCB_Class.h"
 #include <iostream>
-#include <fstream>
 #include <queue>
 #include <strings.h>
-#include <stdlib.h>
-#include <stdio.h>
 
 using namespace std;
 
-PCB_Class::PCB_Class()
-{
-
+PCB_Class::PCB_Class(){
 }
 
-PCB_Class::~PCB_Class()
-{
-    //dtor
+PCB_Class::~PCB_Class(){
 }
 
-// for file, check if priority is 1-100, if arrival and burst are >0 
 bool PCB_Class::loadPCB(string fileLine){
     size_t preBlank,postBlank;
     PCB currentPCB;
@@ -34,8 +33,6 @@ bool PCB_Class::loadPCB(string fileLine){
     preBlank = fileLine.find(UNDERLINE);
     postBlank = fileLine.find(BLANK,preBlank);
     currentPCB.pid = atoi(fileLine.substr(preBlank+1,postBlank).c_str());
-
-    // P_3       10    15  100
     
     preBlank = skipBlanks(fileLine,postBlank);
     postBlank = fileLine.find(BLANK,preBlank+1);
@@ -49,10 +46,6 @@ bool PCB_Class::loadPCB(string fileLine){
     postBlank = fileLine.length();
     currentPCB.priority = atoi(fileLine.substr(preBlank,postBlank).c_str());
 
-    currentPCB.waiting = true;
-
-    cout << "Hey\n" << currentPCB.pid << endl << currentPCB.arrivalTime << endl << currentPCB.burstTime << endl << currentPCB.priority << endl; 
-
     pushQueue(currentPCB, waitQueue);
 
     return !loadErrorCheck(currentPCB);
@@ -62,19 +55,19 @@ bool PCB_Class::loadErrorCheck(PCB_Class::PCB block){
     bool error = false;
 
     if(block.pid < 0){
-        cout << "\tERROR: Pid must be a non-negative integer\n";
+        cout << "\tERROR: Pid of P_" << block.pid << " must be a non-negative integer\n";
         error = true;
     }
     if(block.arrivalTime < 0){
-        cout << "\tERROR: Arrival time must be a non-negative integer\n";
+        cout << "\tERROR: Arrival time of P_" << block.pid << " must be a non-negative integer\n";
         error = true;
     }
-    if(block.burstTime < 0){
-        cout << "\tERROR: CPU burst must be a non-negative integer\n";
+    if(block.burstTime <= 0){
+        cout << "\tERROR: CPU burst of P_" << block.pid << " must be a non-negative integer\n";
         error = true;
     }
     if(block.priority > 100 || block.priority < 0){
-        cout << "\tERROR: Priority must be an integer from 0 to 100\n";
+        cout << "\tERROR: Priority of P_" << block.pid << " must be an integer from 0 to 100\n";
         error = true;
     }
 
@@ -114,93 +107,61 @@ void PCB_Class::swapQueues(queue<PCB>& queue1, queue<PCB>& queue2){
     queue1.swap(queue2);
 }
 
-PCB_Class::PCB PCB_Class::earliestArrival(queue<PCB>& queue){
-    PCB block = getPCB(queue), earliest;
+PCB_Class::PCB PCB_Class::findTagPCB(queue<PCB>& queue, int tag){
+    PCB block = getPCB(queue), tempBlock;
     int size = queueSize(queue);
 
-    earliest = block;
+    tempBlock = block;
 
     for(int i=0;i<size;i++){
         block = getPCB(queue);
         popQueue(queue);
-        if(block.arrivalTime < earliest.arrivalTime){
-            earliest = block;
+
+        // sets tempBlock on a different comparison based on the tag
+        if(tag==PID_TAG){
+            if(block.pid < tempBlock.pid) tempBlock = block;
         }
+        else if(tag==ARRIVAL_TAG){
+            if(block.arrivalTime < tempBlock.arrivalTime) tempBlock = block;
+        }
+        else if(tag==BURST_TAG){
+            if(block.burstTime < tempBlock.burstTime) tempBlock = block;
+        } 
+        else if(tag==PRIORITY_TAG){
+            if(block.priority > tempBlock.priority) tempBlock = block;
+        }
+
         pushQueue(block, queue);
     } 
-    return earliest; 
+    return tempBlock; 
 }
 
-PCB_Class::PCB PCB_Class::smallestPid(queue<PCB>& queue){
-    PCB block = getPCB(queue), smallest;
-    int size = queueSize(queue);
-
-    smallest = block;
-
-    for(int i=0;i<size;i++){
-        block = getPCB(queue);
-        popQueue(queue);
-        if(block.pid < smallest.pid){
-            smallest = block;
-        }
-        pushQueue(block, queue);
-    } 
-    return smallest;
-}
-
-PCB_Class::PCB PCB_Class::shortestJob(queue<PCB>& queue){
-    PCB block = getPCB(queue), shortest;
-    int size = queueSize(queue);
-
-    shortest = block;
-
-    for(int i=0;i<size;i++){
-        block = getPCB(queue);
-        popQueue(queue);
-        if(block.burstTime < shortest.burstTime){
-            shortest = block;
-        }
-        pushQueue(block, queue);
-    } 
-    return shortest;
-}
-
-PCB_Class::PCB PCB_Class::highestPriority(queue<PCB>& queue){
-    PCB block = getPCB(queue), highest;
-    int size = queueSize(queue);
-
-    highest = block;
-
-    for(int i=0;i<size;i++){
-        block = getPCB(queue);
-        popQueue(queue);
-        if(block.priority > highest.priority){
-            highest = block;
-        }
-        pushQueue(block, queue);
-    } 
-    return highest;
-}
-
-// 0 3 4 2 1 5
-// 0 1 2 3 4 5
-// may need a removePCB(pid,queue)
-/*
-void PCB_Class::sortPid(queue<PCB>& queue){
-    queue<PCB_Class::PCB> temp;
+void PCB_Class::queueTagSort(queue<PCB>& queue, int tag){
     PCB block;
-    int size = queueSize(queue);
-    block = smallestPid(queue);
-    smallest = block;
 
-    for(int i=0;i<size;i++){
-        block = getPCB(queue);
-        popQueue(queue);
-        if(block.pid < smallest.pid){
-            smallest = block;
-        }
-        pushQueue(block, temp);
+    while(!queueEmpty(queue)){
+        block = findTagPCB(queue,tag);
+        pushQueue(block, sortQueue);
+        removeBlock(block, queue);
     }
 
-    swapQueues(temp, queue);
-}//*/
+    swapQueues(sortQueue, queue);
+
+    for(int i=0;i<queueSize(sortQueue);i++) popQueue(sortQueue);
+}
+
+void PCB_Class::removeBlock(PCB block, queue<PCB>& queue){
+    int size = queueSize(queue);
+    PCB tempBlock;
+
+    for(int i=0;i<size;i++){
+        tempBlock = getPCB(queue);
+        if(block.pid!=tempBlock.pid){
+            pushQueue(tempBlock, queue);
+            popQueue(queue);
+        }
+        else{
+            popQueue(queue);
+        }      
+    }
+}

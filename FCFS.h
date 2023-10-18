@@ -1,3 +1,10 @@
+// FILE: FCFS.h
+// A Bautista, Transy U
+// OS, Fall 2023
+//
+// Interface for FCFS that contains all functions needed to run the FCFS algorithm and given flags
+//
+
 #ifndef FCFS_H
 #define FCFS_H
 

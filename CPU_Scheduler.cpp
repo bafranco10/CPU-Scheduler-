@@ -1,25 +1,17 @@
-// CPU_Scheduler.cpp
-// Need 2 files for each scheduling type and for the PCB datatype, plus a driver, so at least 11 files
+// FILE: CPU_Scheduler.cpp
+// A Bautista, Transy U
+// OS, Fall 2023
+//
+// Driver for CPU_Scheduler that reads in a file and interprets input to select a scheduling algoirithm to use
+//
 // https://cplusplus.com/reference/queue/queue/ 10-15-2023
+//
 
 #include "PCB_Class.h"
 #include "FCFS.h"
 #include <iostream>
 #include <fstream>
-#include <queue>
 using namespace std;
-
-/* In addition to taking in the file, the program should take in
---type {FCFS|SJF|Priority|RR} (FCFS is the default)
---preemptive (not is the default)
---quanta # (10 is the default)
---file NAME (sched.in is the default)
---verbose (not is the default) for extra info
-
-ID      Arrival_Time      Total_CPU_Burst        Priority
-
-ID is P_#
-*/
 
 const string TYPE="--type", PREEMPTIVE="--preemptive", QUANTA="--quanta",FILE_NAME="--file",VERBOSE="--verbose";
 const string FIRST_COME_FIRST_SERVE="FCFS",SHORTEST_JOB_FIRST="SJF",PRIORITY="Priority",ROUND_ROBIN="RR";
@@ -28,6 +20,7 @@ const int FLAGS=5,TYPE_FLAG=0,PREEMPTIVE_FLAG=1,QUANTA_FLAG=2,FILE_FLAG=3,VERBOS
 
 // checks if input is valid and returns false if no errors found
 bool errorCheck(bool *flags, char **argv, string type, string quanta);
+
 // checks if command line set up is valid and returns false if no isses found
 bool commandCheck(int argc, char**argv);
 
@@ -39,9 +32,7 @@ int main(int argc, char **argv){
 		string type = DEFAULT_TYPE, quanta = DEFAULT_QUANTA, fileName = DEFAULT_FILE;
 		bool flags[FLAGS];
 
-		for(int i=0;i<FLAGS;i++){
-			flags[i]=false;
-		}
+		for(int i=0;i<FLAGS;i++) flags[i]=false;
 
 		if(commandCheck(argc, argv)) return 0;
 
@@ -88,7 +79,6 @@ int main(int argc, char **argv){
 			return 0;
 		}
 
-
 		if(type==FIRST_COME_FIRST_SERVE){
 			fcfs.fcfsSchedule(flags[VERBOSE_FLAG],pcb);
 		}
@@ -101,9 +91,6 @@ int main(int argc, char **argv){
 		else if(type==ROUND_ROBIN){
 
 		}
-
-
-
 
 	return 0;
 }

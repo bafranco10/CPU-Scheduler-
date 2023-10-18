@@ -1,8 +1,14 @@
+// FILE: PCB_Class.h
+// A Bautista, Transy U
+// OS, Fall 2023
+//
+// Interface for PCB_Class that contains all functions needed to access PCBs and queues of PCBs
+//
+
 #ifndef PCB_CLASS_H
 #define PCB_CLASS_H
 
 #include <iostream>
-#include <fstream>
 #include <queue>
 
 using namespace std;
@@ -10,12 +16,12 @@ using namespace std;
 class PCB_Class{
 
     public:
-        //const int NEW_STATUS=0, READY_STATUS=1,RUNNING_STATUS=2,WAITING_STATUS=3,TERMINATED_STATUS=4;
+        const int PID_TAG=0,ARRIVAL_TAG=1,BURST_TAG=2,PRIORITY_TAG=3;
 
         struct PCB{
             int pid, priority, burstTime, arrivalTime;
             int waitTime;
-            bool waiting;
+            // /bool waiting;
         };
 
         queue<PCB> newQueue;
@@ -50,25 +56,25 @@ class PCB_Class{
         // swaps the contents of queue1 and queue2
         void swapQueues(queue<PCB>& queue1, queue<PCB>& queue2);
 
-        // retuns the PCB with the smallest arrival time within the given queue
-        PCB earliestArrival(queue<PCB>& queue);
+        // retuns the PCB with the most significant value of the given tag within the given queue
+        // PID_TAG - smallest pid   ARRIVAL_TAG - earliest arrival 
+        // BURST_TAG - shortest burst   PRIORITY_TAG - highest priority
+        PCB findTagPCB(queue<PCB>& queue, int tag);
 
-        // retuns the PCB with the smallest pid time within the given queue
-        PCB smallestPid(queue<PCB>& queue);
+        // takes in a queue and sorts it on the given tag in
+        // PID_TAG - ascending   ARRIVAL_TAG - ascending 
+        // BURST_TAG - ascending   PRIORITY_TAG - descending
+        void queueTagSort(queue<PCB>& queue, int tag);
 
-        // return the PCB with the shortest CPU burst in the given queue
-        PCB shortestJob(queue<PCB>& queue);
-
-        // returns the PCB with the highest prioirty in the given queue
-        PCB highestPriority(queue<PCB>& queue);
-
-        // takes in a queue and sorts it on pid in ascending order
-        void sortPid(queue<PCB>& queue);
+        // removes the entered block from the given queue
+        void removeBlock(PCB block, queue<PCB>& queue);
 
     protected:
 
     private:
         const char BLANK = ' ', UNDERLINE='_', TAB='\t';
+
+        queue<PCB> sortQueue;
 
         // returns the index of the first non-blank character in the given string starting at the given position
         // returns -1 if only blanks are found
