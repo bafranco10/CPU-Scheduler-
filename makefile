@@ -2,7 +2,7 @@
 # A Bautista, B Franco, E Mora
 # OS, Fall 2023, Transy U
 #
-# makefile for 
+# makefile for Group 3 CPU_Scheduler
 #
 
 CPU_Scheduler: CPU_Scheduler.o PCB_Class.o FCFS.o
