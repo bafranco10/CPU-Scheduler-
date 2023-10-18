@@ -1,6 +1,6 @@
 // FILE: CPU_Scheduler.cpp
-// A Bautista, Transy U
-// OS, Fall 2023
+// A Bautista, B Franco, E Mora
+// OS, Fall 2023, Transy U
 //
 // Driver for CPU_Scheduler that reads in a file and interprets input to select a scheduling algoirithm to use
 //
