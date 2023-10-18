@@ -20,8 +20,8 @@ FCFS.o: FCFS.cpp FCFS.h PCB_Class.h
 roundRobin.o: roundRobin.cpp roundRobin.h PCB_Class.h
 	g++ -c roundRobin.cpp
 
-Priority.o: Priority.cpp Priority.h PCB_Class.h
-	g++ -c Prioirty.cpp
+Priority.o: Priority.cpp Priority.h PCB_Class.h FCFS.h
+	g++ -c Priority.cpp
 
-SJF.o: SJF.cpp SJF.h PCB_Class.h
+SJF.o: SJF.cpp SJF.h PCB_Class.h FCFS.h
 	g++ -c SJF.cpp
