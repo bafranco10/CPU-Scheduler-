@@ -1,6 +1,6 @@
 # FILE: makefile
-# A Bautista, Transy U
-# OS, Fall 2023
+# A Bautista, B Franco, E Mora
+# OS, Fall 2023, Transy U
 #
 # makefile for 
 #
