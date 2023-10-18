@@ -19,13 +19,15 @@ private:
     int timeQuantum;
 
 public:
-    roundRobin(int quantum); // Constructor that takes the time quantum as a parameter
+    //roundRobin(int quantum); // Constructor that takes the time quantum as a parameter
 
+    roundRobin(); 
     ~roundRobin(); // Destructor
 
-    void startRoundRobin(bool verbose);
+    void startRoundRobin(bool verbose, int quantum, PCB_Class& pcb);
+    void rrSchedule(bool verbose, int quantum, PCB_Class& pcb);
 
-    void printOutput(bool verbose);
+    void printOutput(bool verbose, PCB_Class& pcb);
 
     void verboseOutput();
 

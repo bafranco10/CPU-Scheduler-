@@ -1,25 +1,25 @@
-// FILE: FCFS.h
+// FILE: Priority.h
 // A Bautista, B Franco, E Mora
 // OS, Fall 2023, Transy U
 //
-// Interface for FCFS that contains all functions needed to run the FCFS algorithm and given flags
+// Interface for Priority that contains all functions needed to run the Prioirty algorithm and given flags
 //
 
-#ifndef FCFS_H
-#define FCFS_H
+#ifndef PRIORITY_H
+#define PRIORITY_H
 
 #include "PCB_Class.h"
 
 using namespace std;
 
-class FCFS{
+class Priority{
 
     public:
-        FCFS();
-        ~FCFS();
+        Priority();
+        ~Priority();
 
-        // takes in a PCB_Class object and the verbose flag and then schedules using FCFS based on the tag
-        void fcfsSchedule(bool verbose, PCB_Class& pcb, int tag);
+        // takes in a PCB_Class object, the verbose flag, and the preemption flag and then schedules using Priority
+        void prioritySchedule(bool verbose, bool preemption, PCB_Class& pcb);
         
 
     protected:
@@ -32,4 +32,4 @@ class FCFS{
         void verboseOutput(PCB_Class::PCB block);
 };
 
-#endif // FCFS_H
+#endif // PRIORITY_H

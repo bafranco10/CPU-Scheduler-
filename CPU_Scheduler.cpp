@@ -9,6 +9,9 @@
 
 #include "PCB_Class.h"
 #include "FCFS.h"
+#include "Priority.h"
+#include "SJF.h"
+#include "roundRobin.h"
 #include <iostream>
 #include <fstream>
 using namespace std;
@@ -27,6 +30,10 @@ bool commandCheck(int argc, char**argv);
 int main(int argc, char **argv){
 		PCB_Class pcb;
 		FCFS fcfs;
+		SJF sjf;
+		Priority pri;
+		roundRobin rr;
+
 		ifstream inputFile;
 		string fileLine;
 		string type = DEFAULT_TYPE, quanta = DEFAULT_QUANTA, fileName = DEFAULT_FILE;
@@ -80,16 +87,16 @@ int main(int argc, char **argv){
 		}
 
 		if(type==FIRST_COME_FIRST_SERVE){
-			fcfs.fcfsSchedule(flags[VERBOSE_FLAG],pcb);
+			fcfs.fcfsSchedule(flags[VERBOSE_FLAG],pcb,pcb.PID_TAG);
 		}
 		else if(type==SHORTEST_JOB_FIRST){
-
+			sjf.sjfSchedule(flags[VERBOSE_FLAG],flags[PREEMPTIVE_FLAG],pcb);
 		}
 		else if(type==PRIORITY){
-
+			pri.prioritySchedule(flags[VERBOSE_FLAG],flags[PREEMPTIVE_FLAG],pcb);
 		}
 		else if(type==ROUND_ROBIN){
-
+			rr.rrSchedule(flags[VERBOSE_FLAG],atoi(quanta.c_str()),pcb);
 		}
 
 	return 0;

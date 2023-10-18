@@ -16,28 +16,34 @@ FCFS::FCFS(){
 FCFS::~FCFS(){
 }
 
-void FCFS::fcfsSchedule(bool verbose, PCB_Class& pcb){
+void FCFS::fcfsSchedule(bool verbose, PCB_Class& pcb, int tag){
     PCB_Class::PCB block;
     int earliestArrival,cpuTime = 0;
 
-    pcb.queueTagSort(pcb.waitQueue,pcb.PID_TAG);
+    pcb.queueTagSort(pcb.waitQueue,tag);
 
     while(!pcb.queueEmpty(pcb.waitQueue)){
 
         block = pcb.getPCB(pcb.waitQueue);
         if(block.arrivalTime <= cpuTime){
-            block.waitTime = cpuTime - block.arrivalTime;
+            block.enterTime = cpuTime;
+            block.waitTime = block.enterTime - block.arrivalTime;
 
             cpuTime += block.burstTime;
+
+            block.exitTime = cpuTime;
+            block.exitCounter++;
 
             pcb.popQueue(pcb.waitQueue);
             pcb.pushQueue(block, pcb.doneQueue);
         }
+        // if process has not arrived yet move it to back of queue
         else{
             pcb.pushQueue(block, pcb.waitQueue);
             pcb.popQueue(pcb.waitQueue);
 
             earliestArrival = pcb.findTagPCB(pcb.waitQueue,pcb.ARRIVAL_TAG).arrivalTime;
+            // if no other processes can run, then set cputTime to the next arrival
             if(earliestArrival > cpuTime){
                 cpuTime = earliestArrival;
             }
@@ -73,6 +79,6 @@ void FCFS::printOutput(bool verbose, PCB_Class& pcb){
 
 void FCFS::verboseOutput(PCB_Class::PCB block){
     int cpuTime = block.waitTime + block.arrivalTime;
-    cout << " \tCPU Entered: " << cpuTime
-        << " CPU Left: " << (block.burstTime + cpuTime);
+    cout << " \tCPU Entered: " << block.enterTime
+        << " CPU Left: " << block.exitTime;
 }

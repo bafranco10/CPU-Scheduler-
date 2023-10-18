@@ -46,6 +46,11 @@ bool PCB_Class::loadPCB(string fileLine){
     postBlank = fileLine.length();
     currentPCB.priority = atoi(fileLine.substr(preBlank,postBlank).c_str());
 
+    currentPCB.waitTime = 0;
+    currentPCB.exitCounter = 0;
+    currentPCB.exitTime = 0;
+    currentPCB.enterTime = 0;
+
     pushQueue(currentPCB, waitQueue);
 
     return !loadErrorCheck(currentPCB);

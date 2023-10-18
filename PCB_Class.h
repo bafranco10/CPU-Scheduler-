@@ -20,8 +20,7 @@ class PCB_Class{
 
         struct PCB{
             int pid, priority, burstTime, arrivalTime;
-            int waitTime;
-            // /bool waiting;
+            int waitTime,exitCounter,exitTime,enterTime;
         };
 
         queue<PCB> newQueue;
