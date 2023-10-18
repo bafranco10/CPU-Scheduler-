@@ -6,9 +6,6 @@
 #include "roundRobin.h"
 #include "PCB_Class.h"
 #include <queue>
-#include "roundRobin.h"
-#include "PCB_Class.h"
-#include <queue>
 
 roundRobin::roundRobin(int quantum) : cpuTime(0), timeQuantum(quantum) {
 }
