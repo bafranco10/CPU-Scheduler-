@@ -1,6 +1,7 @@
-// roundRobin.h
+// FILE: roundRobin.h
+// Brian Franco, Armando Bautista, Estefan Mora
+// OS, Fall 2023, Transy U
 // Round Robin Interface
-//Brian Franco Armando Bautista Estefan Mora
 
 #ifndef ROUNDROBIN_H
 #define ROUNDROBIN_H
