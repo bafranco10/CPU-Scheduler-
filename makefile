@@ -1,33 +1,27 @@
-// roundRobin.h
-// Round Robin Interface
-//Brian Franco Armando Bautista Estefan Mora
+# FILE: makefile
+# A Bautista, Transy U
+# OS, Fall 2023
+#
+# makefile for 
+#
 
-#ifndef ROUNDROBIN_H
-#define ROUNDROBIN_H
+CPU_Scheduler: CPU_Scheduler.o PCB_Class.o FCFS.o
+	g++ CPU_Scheduler.o PCB_Class.o FCFS.o -o CPU_Scheduler
+	
+CPU_Scheduler.o: CPU_Scheduler.cpp
+		g++ -c CPU_Scheduler.cpp
 
-#include <iostream>
-#include <fstream>
-#include <queue>
-#include "PCB_Class.h" // Include the PCB_Class header
+PCB_Class.o: PCB_Class.cpp PCB_Class.h
+	g++ -c PCB_Class.cpp
 
-using namespace std;
+FCFS.o: FCFS.cpp FCFS.h
+	g++ -c FCFS.cpp
 
-class roundRobin {
-private:
-    int cpuTime;
-    int timeQuantum;
+roundRobin.o: roundRobin.cpp roundRobin.h 
+	g++ -c roundRobin.cpp
 
-public:
-    roundRobin(int quantum); // Constructor that takes the time quantum as a parameter
+Priority.o: Priority.cpp Priority.h
+	g++ -c Prioirty.cpp
 
-    ~roundRobin(); // Destructor
-
-    void startRoundRobin(bool verbose);
-
-    void printOutput(bool verbose);
-
-    void verboseOutput();
-
-};
-
-#endif // ROUNDROBIN_H
+SJF.o: SJF.cpp SJF.h
+	g++ -c SJF.cpp
