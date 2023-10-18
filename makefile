@@ -8,7 +8,7 @@
 CPU_Scheduler: CPU_Scheduler.o PCB_Class.o FCFS.o
 	g++ CPU_Scheduler.o PCB_Class.o FCFS.o -o CPU_Scheduler
 	
-CPU_Scheduler.o: CPU_Scheduler.cpp
+CPU_Scheduler.o: CPU_Scheduler.cpp PCB_Class.h 
 		g++ -c CPU_Scheduler.cpp
 
 PCB_Class.o: PCB_Class.cpp PCB_Class.h
