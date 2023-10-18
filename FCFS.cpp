@@ -1,6 +1,6 @@
 // FILE: FCFS.cpp
-// A Bautista, Transy U
-// OS, Fall 2023
+// A Bautista, B Franco, E Mora
+// OS, Fall 2023, Transy U
 //
 // Implementation for FCFS that contains all functions needed to run the FCFS algorithm and given flags
 //
