@@ -28,76 +28,76 @@ bool errorCheck(bool *flags, char **argv, string type, string quanta);
 bool commandCheck(int argc, char**argv);
 
 int main(int argc, char **argv){
-		PCB_Class pcb;
-		FCFS fcfs;
-		SJF sjf;
-		Priority pri;
-		roundRobin rr;
+	PCB_Class pcb;
+	FCFS fcfs;
+	SJF sjf;
+	Priority pri;
+	roundRobin rr;
 
-		ifstream inputFile;
-		string fileLine;
-		string type = DEFAULT_TYPE, quanta = DEFAULT_QUANTA, fileName = DEFAULT_FILE;
-		bool flags[FLAGS];
+	ifstream inputFile;
+	string fileLine;
+	string type = DEFAULT_TYPE, quanta = DEFAULT_QUANTA, fileName = DEFAULT_FILE;
+	bool flags[FLAGS];
 
-		for(int i=0;i<FLAGS;i++) flags[i]=false;
+	for(int i=0;i<FLAGS;i++) flags[i]=false;
 
-		if(commandCheck(argc, argv)) return 0;
+	if(commandCheck(argc, argv)) return 0;
 
-        // check for ----type find TYPE then if found, but not TYPE, error
-		for(int i=0;i<argc;i++){
-            string argument = argv[i];
-			if(argument == TYPE){
-				type = argv[i+1];
-                flags[TYPE_FLAG] = true;
-			}
-			if(argument == PREEMPTIVE){
-                flags[PREEMPTIVE_FLAG] = true;
-			}
-			if(argument == QUANTA){			
-				quanta = argv[i+1];
-            	flags[QUANTA_FLAG] = true;              
-			}
-			if(argument == FILE_NAME){
-				fileName = argv[i+1];
-            	flags[FILE_FLAG] = true;                
-			}
-			if(argument == VERBOSE){
-                flags[VERBOSE_FLAG] = true;
-			}
+    // check for ----type find TYPE then if found, but not TYPE, error
+	for(int i=0;i<argc;i++){
+        string argument = argv[i];
+		if(argument == TYPE){
+			type = argv[i+1];
+            flags[TYPE_FLAG] = true;
 		}
-		
-		if(!errorCheck(flags, argv, type, quanta)){
-			inputFile.open(fileName);
-			if(inputFile){
-			    while(!inputFile.eof()){
-			        getline(inputFile, fileLine);
-					if(!pcb.loadPCB(fileLine)){
-						return 0;
-					}
+		if(argument == PREEMPTIVE){
+            flags[PREEMPTIVE_FLAG] = true;
+		}
+		if(argument == QUANTA){			
+			quanta = argv[i+1];
+        	flags[QUANTA_FLAG] = true;              
+		}
+		if(argument == FILE_NAME){
+			fileName = argv[i+1];
+        	flags[FILE_FLAG] = true;                
+		}
+		if(argument == VERBOSE){
+            flags[VERBOSE_FLAG] = true;
+		}
+	}
+	
+	if(!errorCheck(flags, argv, type, quanta)){
+		inputFile.open(fileName);
+		if(inputFile){
+		    while(!inputFile.eof()){
+		        getline(inputFile, fileLine);
+				if(!pcb.loadPCB(fileLine)){
+					return 0;
 				}
-				inputFile.close();
 			}
-			else{
-				cout << "\tERROR: File not opened\n";
-				return 0;
-			}
+			inputFile.close();
 		}
 		else{
+			cout << "\tERROR: File not opened\n";
 			return 0;
 		}
+	}
+	else{
+		return 0;
+	}
 
-		if(type==FIRST_COME_FIRST_SERVE){
-			fcfs.fcfsSchedule(flags[VERBOSE_FLAG],pcb,pcb.PID_TAG);
-		}
-		else if(type==SHORTEST_JOB_FIRST){
-			sjf.sjfSchedule(flags[VERBOSE_FLAG],flags[PREEMPTIVE_FLAG],pcb);
-		}
-		else if(type==PRIORITY){
-			pri.prioritySchedule(flags[VERBOSE_FLAG],flags[PREEMPTIVE_FLAG],pcb);
-		}
-		else if(type==ROUND_ROBIN){
-			rr.rrSchedule(flags[VERBOSE_FLAG],atoi(quanta.c_str()),pcb);
-		}
+	if(type==FIRST_COME_FIRST_SERVE){
+		fcfs.fcfsSchedule(flags[VERBOSE_FLAG],pcb,pcb.PID_TAG);
+	}
+	else if(type==SHORTEST_JOB_FIRST){
+		sjf.sjfSchedule(flags[VERBOSE_FLAG],flags[PREEMPTIVE_FLAG],pcb);
+	}
+	else if(type==PRIORITY){
+		pri.prioritySchedule(flags[VERBOSE_FLAG],flags[PREEMPTIVE_FLAG],pcb);
+	}
+	else if(type==ROUND_ROBIN){
+		rr.rrSchedule(flags[VERBOSE_FLAG],atoi(quanta.c_str()),pcb);
+	}
 
 	return 0;
 }

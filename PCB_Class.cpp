@@ -30,6 +30,7 @@ bool PCB_Class::loadPCB(string fileLine){
         }
     }
 
+    // separates 4 values in a line based on blanks
     preBlank = fileLine.find(UNDERLINE);
     postBlank = fileLine.find(BLANK,preBlank);
     currentPCB.pid = atoi(fileLine.substr(preBlank+1,postBlank).c_str());
@@ -51,7 +52,7 @@ bool PCB_Class::loadPCB(string fileLine){
     currentPCB.exitTime = 0;
     currentPCB.enterTime = 0;
 
-    pushQueue(currentPCB, waitQueue);
+    pushQueue(currentPCB, initQueue);
 
     return !loadErrorCheck(currentPCB);
 }
@@ -143,7 +144,6 @@ PCB_Class::PCB PCB_Class::findTagPCB(queue<PCB>& queue, int tag){
 
 void PCB_Class::queueTagSort(queue<PCB>& queue, int tag){
     PCB block;
-
     while(!queueEmpty(queue)){
         block = findTagPCB(queue,tag);
         pushQueue(block, sortQueue);
@@ -168,5 +168,25 @@ void PCB_Class::removeBlock(PCB block, queue<PCB>& queue){
         else{
             popQueue(queue);
         }      
+    }
+}
+
+void PCB_Class::makeReady(queue<PCB>& queue, int cpuTime){
+    int size = queueSize(queue);
+    PCB block;
+
+    // push the next available process in initQueue into readyQueue
+    for(int i=0;i<size;i++){
+        block = getPCB(queue);
+        if(block.arrivalTime<=cpuTime){
+            pushQueue(block, readyQueue);
+            popQueue(queue);
+            break;
+        }
+        else{
+            pushQueue(block, queue);
+            popQueue(queue);
+        }      
+
     }
 }

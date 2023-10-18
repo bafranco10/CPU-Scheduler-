@@ -19,34 +19,34 @@ FCFS::~FCFS(){
 void FCFS::fcfsSchedule(bool verbose, PCB_Class& pcb, int tag){
     PCB_Class::PCB block;
     int earliestArrival,cpuTime = 0;
+    int initSize = pcb.queueSize(pcb.initQueue);
 
-    pcb.queueTagSort(pcb.waitQueue,tag);
+    // keeps looping until all processes are in doneQueue
+    while(pcb.queueSize(pcb.doneQueue)!=initSize){
 
-    while(!pcb.queueEmpty(pcb.waitQueue)){
+        // if initQueue not empty then check if a process is ready and put it into readyQueue
+        if(!pcb.queueEmpty(pcb.initQueue)){
+            pcb.queueTagSort(pcb.initQueue,tag);
+            pcb.makeReady(pcb.initQueue,cpuTime);
+        }
 
-        block = pcb.getPCB(pcb.waitQueue);
-        if(block.arrivalTime <= cpuTime){
-            block.enterTime = cpuTime;
-            block.waitTime = block.enterTime - block.arrivalTime;
+        // if readyQueue is empty, but initQueue isn't then change cpuTime to arrival of next process
+        if(pcb.queueEmpty(pcb.readyQueue) && !pcb.queueEmpty(pcb.initQueue) ){
+            pcb.queueTagSort(pcb.initQueue,tag);
+            cpuTime = pcb.findTagPCB(pcb.initQueue,pcb.ARRIVAL_TAG).arrivalTime;
+        }
+        // process can be done
+        else{
+            block = pcb.getPCB(pcb.readyQueue);
+        
+            block.waitTime = cpuTime - block.arrivalTime;
 
             cpuTime += block.burstTime;
 
             block.exitTime = cpuTime;
-            block.exitCounter++;
 
-            pcb.popQueue(pcb.waitQueue);
+            pcb.popQueue(pcb.readyQueue);
             pcb.pushQueue(block, pcb.doneQueue);
-        }
-        // if process has not arrived yet move it to back of queue
-        else{
-            pcb.pushQueue(block, pcb.waitQueue);
-            pcb.popQueue(pcb.waitQueue);
-
-            earliestArrival = pcb.findTagPCB(pcb.waitQueue,pcb.ARRIVAL_TAG).arrivalTime;
-            // if no other processes can run, then set cputTime to the next arrival
-            if(earliestArrival > cpuTime){
-                cpuTime = earliestArrival;
-            }
         }
     }
     printOutput(verbose, pcb);
@@ -78,7 +78,6 @@ void FCFS::printOutput(bool verbose, PCB_Class& pcb){
 }
 
 void FCFS::verboseOutput(PCB_Class::PCB block){
-    int cpuTime = block.waitTime + block.arrivalTime;
-    cout << " \tCPU Entered: " << block.enterTime
+    cout << " \tCPU Entered: " << (block.waitTime + block.arrivalTime)
         << " CPU Left: " << block.exitTime;
 }

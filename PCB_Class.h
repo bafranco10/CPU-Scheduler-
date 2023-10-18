@@ -23,7 +23,7 @@ class PCB_Class{
             int waitTime,exitCounter,exitTime,enterTime;
         };
 
-        queue<PCB> newQueue;
+        queue<PCB> initQueue;
         queue<PCB> readyQueue;
         queue<PCB> waitQueue;
         queue<PCB> doneQueue;
@@ -67,6 +67,9 @@ class PCB_Class{
 
         // removes the entered block from the given queue
         void removeBlock(PCB block, queue<PCB>& queue);
+
+        // takes in a queue and cpuTime and then pushes the next available process
+        void makeReady(queue<PCB>& queue, int cpuTime);
 
     protected:
 
