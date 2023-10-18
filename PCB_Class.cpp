@@ -1,6 +1,6 @@
 // FILE: PCB_Class.cpp
-// A Bautista, Transy U
-// OS, Fall 2023
+// A Bautista, B Franco, E Mora
+// OS, Fall 2023, Transy U
 //
 // Implementation for PCB_Class that contains all functions needed to access PCBs and queues of PCBs
 //
