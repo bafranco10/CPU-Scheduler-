@@ -22,10 +22,13 @@ const string DEFAULT_TYPE=FIRST_COME_FIRST_SERVE,DEFAULT_QUANTA="10",DEFAULT_FIL
 const int FLAGS=5,TYPE_FLAG=0,PREEMPTIVE_FLAG=1,QUANTA_FLAG=2,FILE_FLAG=3,VERBOSE_FLAG=4;
 
 // checks if input is valid and returns false if no errors found
-bool errorCheck(bool *flags, char **argv, string type, string quanta);
+bool inputErrorCheck(bool *flags, char **argv, string type, string quanta);
 
 // checks if command line set up is valid and returns false if no isses found
-bool commandCheck(int argc, char**argv);
+bool commandErrorCheck(int argc, char**argv);
+
+// checks if the values in the given PCB are valid, returns false if no errors found
+bool loadErrorCheck(PCB_Class::PCB block);
 
 int main(int argc, char **argv){
 	PCB_Class pcb;
@@ -41,39 +44,56 @@ int main(int argc, char **argv){
 
 	for(int i=0;i<FLAGS;i++) flags[i]=false;
 
-	if(commandCheck(argc, argv)) return 0;
+	if(commandErrorCheck(argc, argv)) return 0;
 
-    // check for ----type find TYPE then if found, but not TYPE, error
-	for(int i=0;i<argc;i++){
-        string argument = argv[i];
-		if(argument == TYPE){
+	for(int i=1;i<argc;i++){
+		if(argv[i] == TYPE){
 			type = argv[i+1];
             flags[TYPE_FLAG] = true;
 		}
-		if(argument == PREEMPTIVE){
+		else if(argv[i] == PREEMPTIVE){
             flags[PREEMPTIVE_FLAG] = true;
 		}
-		if(argument == QUANTA){			
+		else if(argv[i] == QUANTA){			
 			quanta = argv[i+1];
         	flags[QUANTA_FLAG] = true;              
 		}
-		if(argument == FILE_NAME){
+		else if(argv[i] == FILE_NAME){
 			fileName = argv[i+1];
         	flags[FILE_FLAG] = true;                
 		}
-		if(argument == VERBOSE){
+		else if(argv[i] == VERBOSE){
             flags[VERBOSE_FLAG] = true;
 		}
 	}
 	
-	if(!errorCheck(flags, argv, type, quanta)){
+	if(!inputErrorCheck(flags, argv, type, quanta)){
 		inputFile.open(fileName);
 		if(inputFile){
 		    while(!inputFile.eof()){
-		        getline(inputFile, fileLine);
-				if(!pcb.loadPCB(fileLine)){
-					return 0;
-				}
+		        string fileInput;
+		    	PCB_Class::PCB currentPCB;
+		        
+		    	inputFile >> fileInput;
+    			currentPCB.pid = atoi(fileInput.substr(2,fileInput.length()-1).c_str());
+
+    			inputFile >> fileInput;
+    			currentPCB.arrivalTime = atoi(fileInput.c_str());
+
+    			inputFile >> fileInput;
+    			currentPCB.burstTime = atoi(fileInput.c_str());
+
+    			inputFile >> fileInput;
+    			currentPCB.priority = atoi(fileInput.c_str());
+
+			    currentPCB.waitTime = 0;
+			    currentPCB.exitCounter = 0;
+			    currentPCB.exitTime = 0;
+			    currentPCB.enterTime = 0;
+
+    			pcb.pushQueue(currentPCB, pcb.initQueue);
+
+    			if(loadErrorCheck(currentPCB)) return 0;
 			}
 			inputFile.close();
 		}
@@ -102,7 +122,7 @@ int main(int argc, char **argv){
 	return 0;
 }
 
-bool errorCheck(bool *flags, char **argv, string type, string quanta){
+bool inputErrorCheck(bool *flags, char **argv, string type, string quanta){
 	bool error = false;
 	if(flags[PREEMPTIVE_FLAG] && type == FIRST_COME_FIRST_SERVE){
 		cout << "\tERROR: FCFS cannot be preemptive\n";
@@ -127,20 +147,55 @@ bool errorCheck(bool *flags, char **argv, string type, string quanta){
 	return error;		
 }
 
-bool commandCheck(int argc, char**argv){
+bool commandErrorCheck(int argc, char**argv){
 	bool error = false;
 
 	if(argv[argc-1]==TYPE){
 		cout << "\tERROR: " << TYPE << " requires an input\n";
 		error = true;
 	}
-	else if(argv[argc-1]==TYPE){
+	else if(argv[argc-1]==QUANTA){
 		cout << "\tERROR: " << QUANTA << " requires an input\n";
 		error = true;
 	}
-	else if(argv[argc-1]==TYPE){
+	else if(argv[argc-1]==FILE_NAME){
 		cout << "\tERROR: " << FILE_NAME << " requires an input\n";
 		error = true;
 	}
+	else{
+		for(int i=1;i<argc;i++){
+			// if one of the inputs is not a valid option and does not come after an option with a parameter then error
+			if(argv[i] != TYPE && argv[i] != PREEMPTIVE && argv[i] != QUANTA && argv[i] != FILE_NAME && argv[i] != VERBOSE) {
+				if(argv[i-1] != TYPE && argv[i-1] != QUANTA && argv[i-1] != FILE_NAME){
+					cout << "\tERROR: " << argv[i] << " is not a valid option\n";
+					error = true;
+				}
+			}
+		}
+	}
+
 	return error;
+}
+
+bool loadErrorCheck(PCB_Class::PCB block){
+    bool error = false;
+
+    if(block.pid < 0){
+        cout << "\tERROR: Pid of P_" << block.pid << " must be a non-negative integer\n";
+        error = true;
+    }
+    if(block.arrivalTime < 0){
+        cout << "\tERROR: Arrival time of P_" << block.pid << " must be a non-negative integer\n";
+        error = true;
+    }
+    if(block.burstTime <= 0){
+        cout << "\tERROR: CPU burst of P_" << block.pid << " must be a non-negative integer\n";
+        error = true;
+    }
+    if(block.priority > 100 || block.priority < 0){
+        cout << "\tERROR: Priority of P_" << block.pid << " must be an integer from 0 to 100\n";
+        error = true;
+    }
+
+    return error;
 }
