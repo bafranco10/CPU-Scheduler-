@@ -68,8 +68,6 @@ class PCB_Class{
     protected:
 
     private:
-        const char BLANK = ' ', UNDERLINE='_', TAB='\t';
-
         queue<PCB> sortQueue;
 
         
