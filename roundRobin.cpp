@@ -7,11 +7,6 @@
 #include "PCB_Class.h"
 #include <queue>
 
-/*
-roundRobin::roundRobin(int quantum) : cpuTime(0), timeQuantum(quantum) {
-}
-//*/
-
 roundRobin::roundRobin() {
 
 }
@@ -19,90 +14,91 @@ roundRobin::roundRobin() {
 roundRobin::~roundRobin() {
     // Destructor
 }
-
-void roundRobin::startRoundRobin(bool verbose, int quantum, PCB_Class& pcb) {
-    PCB_Class::PCB block;
-    int cpuTime = 0;
-
-    while (!pcb.queueEmpty(pcb.waitQueue)) {
-        block = pcb.getPCB(pcb.waitQueue);
-        if (block.burstTime <= quantum) {
-            // Process can complete in this quantum
-            block.waitTime = cpuTime - block.arrivalTime;
-            cpuTime += block.burstTime;
-            pcb.popQueue(pcb.waitQueue);
-            pcb.pushQueue(block, pcb.doneQueue);
-        } else {
-            // Process needs more quantum time
-            block.waitTime = cpuTime - block.arrivalTime;
-            cpuTime += quantum;
-            block.burstTime -= quantum;
-            pcb.pushQueue(block, pcb.waitQueue);
-            pcb.popQueue(pcb.waitQueue);
-        }
-    }
-    printOutput(verbose,pcb);
-}
-
+///*
 // doesn't work yet, but prints out something
 void roundRobin::rrSchedule(bool verbose, int quantum, PCB_Class& pcb){
     PCB_Class::PCB block;
     int earliestArrival,cpuTime = 0;
+    int initSize = pcb.queueSize(pcb.initQueue);
 
-    pcb.queueTagSort(pcb.waitQueue,pcb.PID_TAG);
+    // keeps looping until all processes are in doneQueue
+    while(pcb.queueSize(pcb.doneQueue)!=initSize){
 
-    while (!pcb.queueEmpty(pcb.waitQueue)) {
+        // if initQueue not empty then check if a process is ready and put it into readyQueue
+        if(!pcb.queueEmpty(pcb.initQueue)){
+            pcb.queueTagSort(pcb.initQueue,pcb.PID_TAG);
+            pcb.makeReady(pcb.initQueue,cpuTime);
+        }
 
-        block = pcb.getPCB(pcb.waitQueue);
-        if(block.arrivalTime <= cpuTime){
+        // if readyQueue is empty, but initQueue isn't then change cpuTime to arrival of next process
+        if(pcb.queueEmpty(pcb.readyQueue) && !pcb.queueEmpty(pcb.initQueue) ){
+            pcb.queueTagSort(pcb.initQueue,pcb.PID_TAG);
+            cpuTime = pcb.findTagPCB(pcb.initQueue,pcb.ARRIVAL_TAG).arrivalTime;
+        }
+        // process can be done
+        else{
+            block = pcb.getPCB(pcb.readyQueue);
+
+            cout << "P" << block.pid << "Enter" << cpuTime << endl;
+
             if (block.burstTime > quantum) {
                 block.burstTime -= quantum;
 
-                block.enterTime = cpuTime;
+                // block.enterTime = cpuTime;
+                
+                calcWait(block,cpuTime);
+
                 cpuTime += quantum;
-                cout << "exit time" <<block.exitTime <<endl;
+
+                block.exitTime = cpuTime;
+                block.exitCounter++;
+
+                pcb.pushQueue(block, pcb.readyQueue);
+                pcb.popQueue(pcb.readyQueue);
+            } 
+            else{
+                block.burstTime -= block.burstTime;
+                // block.enterTime = cpuTime;
+
+                calcWait(block,cpuTime);
+
+                cpuTime += block.burstTime;
+
+                block.exitTime = cpuTime;
+                block.exitCounter++;
+
+                pcb.pushQueue(block, pcb.doneQueue);
+                pcb.popQueue(pcb.readyQueue);
+            }
+
+            cout << "P" << block.pid << "Exit" << block.exitTime << endl;
+        }
+    }
+    printOutput(verbose, pcb);
+}//*/
+
+/*cout << "exit time" << block.exitTime << endl;
                 if (block.arrivalTime > 0 && block.exitCounter == 0 ) {
                     block.waitTime += block.enterTime - block.exitTime - block.arrivalTime; 
                 }
                 else {
                 block.waitTime += block.enterTime - block.exitTime; 
                 }
-                cout << block.waitTime << " " << block.pid <<endl;
-                block.exitTime = cpuTime;
-                block.exitCounter++;
-                pcb.pushQueue(block, pcb.waitQueue);
-                pcb.popQueue(pcb.waitQueue);
-            } 
-            else{
-                block.enterTime = cpuTime;
 
-                cpuTime += block.burstTime;
-                cout << "exit time" <<block.exitTime <<endl;
-                if (block.arrivalTime > 0 && block.exitCounter == 0 ) {
-                    block.waitTime += block.enterTime - block.exitTime - block.arrivalTime; 
-                }
-                else {
-                    block.waitTime += block.enterTime - block.exitTime; 
-                }
-                cout << block.waitTime << " " << block.pid <<endl;
-                block.exitTime = cpuTime;
-                block.exitCounter++;
-                pcb.popQueue(pcb.waitQueue);
-                pcb.pushQueue(block, pcb.doneQueue);
-            }
-        }
-        else{
-            pcb.pushQueue(block, pcb.waitQueue);
-            pcb.popQueue(pcb.waitQueue);
+void roundRobin::rrSchedule(bool verbose, int quantum, PCB_Class& pcb){
 
-            earliestArrival = pcb.findTagPCB(pcb.waitQueue,pcb.ARRIVAL_TAG).arrivalTime;
-            if(earliestArrival > cpuTime){
-                cpuTime = earliestArrival;
-            }
+        if(block.arrivalTime <= cpuTime){
+        
+            block.waitTime = cpuTime - block.arrivalTime;
+
+            cpuTime += block.burstTime;
+
+            block.exitTime = cpuTime;
+
+            pcb.popQueue(pcb.readyQueue);
+            pcb.pushQueue(block, pcb.doneQueue);
         }
-    }
-    printOutput(verbose,pcb);
-}
+}//*/
  
 void roundRobin::printOutput(bool verbose, PCB_Class& pcb) {
     if (!verbose) {
@@ -130,4 +126,13 @@ void roundRobin::printOutput(bool verbose, PCB_Class& pcb) {
 
 void roundRobin::verboseOutput() {
    
+}
+
+void roundRobin::calcWait(PCB_Class::PCB& block, int cpuTime){
+    if(block.exitCounter==0){
+        block.waitTime += cpuTime - block.arrivalTime;
+    }
+    else{
+        block.waitTime += cpuTime - block.exitTime;
+    }
 }
