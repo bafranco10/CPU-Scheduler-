@@ -18,6 +18,69 @@ PCB_Class::PCB_Class(){
 PCB_Class::~PCB_Class(){
 }
 
+bool PCB_Class::loadPCB(string fileLine){
+    size_t preBlank,postBlank;
+    PCB currentPCB;
+    bool loadSuccess = true;
+
+    // ensures only blanks are in fileLine by replacing tabs
+    for(int i=0;i<fileLine.length();i++){
+        if(fileLine[i]==TAB){
+            fileLine[i] = BLANK;
+        }
+    }
+
+    // separates 4 values in a line based on blanks
+    preBlank = fileLine.find(UNDERLINE);
+    postBlank = fileLine.find(BLANK,preBlank);
+    currentPCB.pid = atoi(fileLine.substr(preBlank+1,postBlank).c_str());
+    
+    preBlank = skipBlanks(fileLine,postBlank);
+    postBlank = fileLine.find(BLANK,preBlank+1);
+    currentPCB.arrivalTime = atoi(fileLine.substr(preBlank,postBlank).c_str());
+
+    preBlank = skipBlanks(fileLine,postBlank);
+    postBlank = fileLine.find(BLANK,preBlank+1);
+    currentPCB.burstTime = atoi(fileLine.substr(preBlank,postBlank).c_str());
+
+    preBlank = skipBlanks(fileLine,postBlank);
+    postBlank = fileLine.length();
+    currentPCB.priority = atoi(fileLine.substr(preBlank,postBlank).c_str());
+
+    currentPCB.waitTime = 0;
+    currentPCB.exitCounter = 0;
+    currentPCB.exitTime = 0;
+    currentPCB.enterTime = 0;
+    currentPCB.isFirst = false;
+
+    pushQueue(currentPCB, initQueue);
+
+    return !loadErrorCheck(currentPCB);
+}
+
+bool PCB_Class::loadErrorCheck(PCB_Class::PCB block){
+    bool error = false;
+
+    if(block.pid < 0){
+        cout << "\tERROR: Pid of P_" << block.pid << " must be a non-negative integer\n";
+        error = true;
+    }
+    if(block.arrivalTime < 0){
+        cout << "\tERROR: Arrival time of P_" << block.pid << " must be a non-negative integer\n";
+        error = true;
+    }
+    if(block.burstTime <= 0){
+        cout << "\tERROR: CPU burst of P_" << block.pid << " must be a non-negative integer\n";
+        error = true;
+    }
+    if(block.priority > 100 || block.priority < 0){
+        cout << "\tERROR: Priority of P_" << block.pid << " must be an integer from 0 to 100\n";
+        error = true;
+    }
+
+    return error;
+}
+
 void PCB_Class::pushQueue(PCB block, queue<PCB>& queue){
     queue.push(block);
 }
@@ -36,6 +99,15 @@ bool PCB_Class::queueEmpty(queue<PCB>& queue){
 
 int PCB_Class::queueSize(queue<PCB>& queue){
     return queue.size();
+}
+
+int PCB_Class::skipBlanks(string& fileLine, int startPos){
+    for(int i=startPos;i<fileLine.length();i++){
+        if(fileLine[i]!=BLANK){
+            return i;
+        }
+    }
+    return -1;
 }
 
 void PCB_Class::swapQueues(queue<PCB>& queue1, queue<PCB>& queue2){
@@ -100,7 +172,7 @@ void PCB_Class::removeBlock(PCB block, queue<PCB>& queue){
     }
 }
 
-void PCB_Class::makeReady(queue<PCB>& queue, int cpuTime){
+ void PCB_Class::makeReady(queue<PCB>& queue, int cpuTime){
     int size = queueSize(queue);
     PCB block;
 
@@ -118,4 +190,49 @@ void PCB_Class::makeReady(queue<PCB>& queue, int cpuTime){
         }      
 
     }
+} 
+
+void PCB_Class::printReadyQueue() {
+  queue<PCB> tempQueue = readyQueue;
+    
+    while (!tempQueue.empty()) {
+      PCB block = tempQueue.front();
+        tempQueue.pop();
+	
+        // Print the information of each PCB in the readyQueue
+        cout << "P_" << block.pid << " Arrival Time: " << block.arrivalTime << " Burst Time: " << block.burstTime << " Priority: " << block.priority << endl;
+    }
 }
+void PCB_Class::makeReadyRR(queue<PCB>& inputQueue, int cpuTime) {
+    int size = queueSize(inputQueue);
+    bool first = true;  // Set the first element of tempQueue to true
+    // Create a temporary queue to hold the processes to be moved
+    queue<PCB> tempQueue;
+
+    for (int i = 0; i < size; i++) {
+        PCB block = getPCB(inputQueue);
+        if (block.arrivalTime <= cpuTime) {
+            // Process is ready, move it to the temporary queue
+            pushQueue(block, tempQueue);
+        } else {
+            // Process is not ready, keep it in the original queue
+            pushQueue(block, inputQueue);
+        }
+        popQueue(inputQueue);
+    }
+
+    // Set isFirst flag to true for the first element in tempQueue
+    if (!tempQueue.empty()) {
+        PCB& firstBlock = tempQueue.front();
+        firstBlock.isFirst = true;
+    }
+
+    // Move all processes from the temporary queue to the readyQueue
+    while (!tempQueue.empty()) {
+        PCB block = tempQueue.front();
+        cout << "is first: " << block.isFirst << endl;
+        pushQueue(block, readyQueue);
+        tempQueue.pop();
+    }
+}
+
