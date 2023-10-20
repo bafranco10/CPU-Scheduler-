@@ -194,6 +194,7 @@ void PCB_Class::removeBlock(PCB block, queue<PCB>& queue){
     }
 } 
 
+
 void PCB_Class::makeReadySJF(queue<PCB>& queue, int cpuTime){
     int size = queueSize(queue);
     PCB block;
@@ -268,4 +269,17 @@ void PCB_Class::printInitQueue() {
         tempQueue.pop();
     }
     cout << endl;
+
+
+void PCB_Class::printDoneQueue() {
+    // Iterate through the elements in the doneQueue and print their contents
+    cout << "Done Queue: ";
+    queue<PCB> tempQueue = doneQueue;
+    while (!tempQueue.empty()) {
+        PCB block = tempQueue.front();
+        cout << "P" << block.pid << " (Exit Time: " << block.exitTime << ", Wait Time: " << block.waitTime << ") ";
+        tempQueue.pop();
+    }
+    cout << endl;
 }
+

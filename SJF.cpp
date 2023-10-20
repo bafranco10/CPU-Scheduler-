@@ -8,7 +8,6 @@
 #include "SJF.h"
 #include "FCFS.h"
 #include "PCB_Class.h"
-#include <map>
 using namespace std;
 
 SJF::SJF(){
