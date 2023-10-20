@@ -14,19 +14,15 @@
 using namespace std;
 
 class roundRobin {
-private:
-    int cpuTime;
-    int timeQuantum;
-
-public:
-
-    roundRobin(); 
-    ~roundRobin(); // Destructor
+    public:
     
-    void rrSchedule(bool verbose, int quantum, PCB_Class& pcb);
-    void calcWait(PCB_Class::PCB& block, int cpuTime);
-
-    void printOutput(PCB_Class& pcb);
+        roundRobin(); 
+        ~roundRobin(); // Destructor
+        
+        void rrSchedule(bool verbose, int quantum, PCB_Class& pcb);
+        void calcWait(PCB_Class::PCB& block, int cpuTime);
+    
+        void printOutput(PCB_Class& pcb);
 };
 
 #endif // ROUNDROBIN_H
