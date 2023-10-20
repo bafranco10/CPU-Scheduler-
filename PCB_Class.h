@@ -31,7 +31,7 @@ class PCB_Class{
 
         PCB_Class();
         ~PCB_Class();
-
+        void printInitQueue();
         // takes in a PCB line and puts it into newQueue, returns true on success
         bool loadPCB(string fileLine);
 

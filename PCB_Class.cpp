@@ -203,6 +203,7 @@ void PCB_Class::printReadyQueue() {
         cout << "P_" << block.pid << " Arrival Time: " << block.arrivalTime << " Burst Time: " << block.burstTime << " Priority: " << block.priority << endl;
     }
 }
+
 void PCB_Class::makeReadyRR(queue<PCB>& inputQueue, int cpuTime) {
     int size = queueSize(inputQueue);
     bool first = true;  // Set the first element of tempQueue to true
@@ -234,5 +235,16 @@ void PCB_Class::makeReadyRR(queue<PCB>& inputQueue, int cpuTime) {
         pushQueue(block, readyQueue);
         tempQueue.pop();
     }
+}
+void PCB_Class::printInitQueue() {
+    // Iterate through the elements in the initQueue and print their contents
+    cout << "Init Queue: ";
+    queue<PCB> tempQueue = initQueue;
+    while (!tempQueue.empty()) {
+        PCB block = tempQueue.front();
+        cout << "P" << block.pid << " (Arrival Time: " << block.arrivalTime << ", Burst Time: " << block.burstTime << ") ";
+        tempQueue.pop();
+    }
+    cout << endl;
 }
 
