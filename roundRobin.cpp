@@ -14,40 +14,42 @@ roundRobin::roundRobin() {
 roundRobin::~roundRobin() {
     // Destructor
 }
-///*
-// doesn't work yet, but prints out something
+// takes in verbose a quantum and a set of PCB blocks
+// Returns each process wait time as well as prints queues necessary for debugging. 
+// also it does cpu scheduling in round robin format
 void roundRobin::rrSchedule(bool verbose, int quantum, PCB_Class& pcb) {
     PCB_Class::PCB block;
     int cpuTime = 0;
     int initSize = pcb.queueSize(pcb.initQueue);
-    bool processRunning = false;
-    pcb.printInitQueue();
-    cout << "that was pcb" << endl;
-
     // Keep looping until all processes are in doneQueue
     while (pcb.queueSize(pcb.doneQueue) != initSize) {
         // Move all ready processes from initQueue to readyQueue
         int initQueueSize = pcb.queueSize(pcb.initQueue);
         for (int i = 0; i < initQueueSize; ++i) {
+            // gets first process in list
             PCB_Class::PCB firstProcess = pcb.getPCB(pcb.initQueue);
             if (firstProcess.arrivalTime <= cpuTime) {
                 pcb.pushQueue(firstProcess, pcb.readyQueue);
-                // Make sure to remove the process from initQueue
+                // Makes sure to remove the process from initQueue
                 pcb.popQueue(pcb.initQueue);
+                pcb.printInitQueue();
+
             }
         }
-
-        // If readyQueue is empty, move to the next ready process
+        // If readyQueue is not empty move to next ready process
         if (!pcb.queueEmpty(pcb.readyQueue)) {
             block = pcb.getPCB(pcb.readyQueue);
-
+            if (verbose) {
             cout << "P" << block.pid << " Enter " << cpuTime << endl;
             pcb.printReadyQueue();
-
+        }
+            // if burst time is greater than quantum calculate wait time and how much time is left for process to finish
+            // also keep track of when the process left
             if (block.burstTime > quantum) {
                 block.burstTime -= quantum;
-                cout << "process: " <<block.pid << " " << block.burstTime <<endl;
-                processRunning = true; // Mark a process as running
+                if (verbose) {
+                cout << "process: " << block.pid << " burst time:" << block.burstTime <<endl;
+            }
 
                 calcWait(block, cpuTime);
 
@@ -58,52 +60,35 @@ void roundRobin::rrSchedule(bool verbose, int quantum, PCB_Class& pcb) {
 
                 pcb.pushQueue(block, pcb.readyQueue);
                 pcb.popQueue(pcb.readyQueue);
-            } else {
+            }
+            // if process is less than quantum then increment cpuTime by burst time that process had left  
+            else {
                 int newQuantum = block.burstTime;
                 block.burstTime = 0; // Process completes
-                processRunning = true; // Mark a process as running
 
                 calcWait(block, cpuTime);
 
-                cpuTime += newQuantum; // This line might need adjustment
-
+                cpuTime += newQuantum;
                 block.exitTime = cpuTime;
                 block.exitCounter++;
 
                 pcb.pushQueue(block, pcb.doneQueue);
+                pcb.printDoneQueue();
                 pcb.popQueue(pcb.readyQueue);
             }
-
+            if (verbose) {
             cout << "P" << block.pid << " Exit " << block.exitTime << endl;
-            processRunning = false; // Reset the flag when a process exits
         }
+        }
+        // if readyQueue is empty increment cpuTime by 1 till another process is ready
+        else 
+            {
+                cpuTime++;
+                } 
     }
     printOutput(verbose, pcb);
 }
 
-/*cout << "exit time" << block.exitTime << endl;
-                if (block.arrivalTime > 0 && block.exitCounter == 0 ) {
-                    block.waitTime += block.enterTime - block.exitTime - block.arrivalTime; 
-                }
-                else {
-                block.waitTime += block.enterTime - block.exitTime; 
-                }
-
-void roundRobin::rrSchedule(bool verbose, int quantum, PCB_Class& pcb){
-
-        if(block.arrivalTime <= cpuTime){
-        
-            block.waitTime = cpuTime - block.arrivalTime;
-
-            cpuTime += block.burstTime;
-
-            block.exitTime = cpuTime;
-
-            pcb.popQueue(pcb.readyQueue);
-            pcb.pushQueue(block, pcb.doneQueue);
-        }
-}*/
- 
 void roundRobin::printOutput(bool verbose, PCB_Class& pcb) {
     if (!verbose) {
         PCB_Class::PCB block;
@@ -128,11 +113,10 @@ void roundRobin::printOutput(bool verbose, PCB_Class& pcb) {
     }
 }
 
-void roundRobin::verboseOutput() {
-   
-}
-
+// takes in a pcb block and a cpu time and returns the wait time 
 void roundRobin::calcWait(PCB_Class::PCB& block, int cpuTime){
+    // if block enters for first time wait = cpu time - arrivalTime which
+    //otherwise it is equal to cpuTime - last exit
     if(block.exitCounter==0){
         block.waitTime += cpuTime - block.arrivalTime;
     }

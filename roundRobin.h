@@ -27,9 +27,6 @@ public:
     void calcWait(PCB_Class::PCB& block, int cpuTime);
 
     void printOutput(bool verbose, PCB_Class& pcb);
-
-    void verboseOutput();
-
 };
 
 #endif // ROUNDROBIN_H
