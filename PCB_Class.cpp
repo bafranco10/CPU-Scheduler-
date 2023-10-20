@@ -259,7 +259,6 @@ void PCB_Class::makeReadySJF(queue<PCB>& queue, int cpuTime){
             block.enterTime = cpuTime;  // Set the time when the process entered the readyQueue
             pushQueue(block, readyQueue);
             popQueue(queue);
-            break;
         }
         else{
             pushQueue(block, queue);
