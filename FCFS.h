@@ -21,9 +21,6 @@ class FCFS{
         // takes in a PCB_Class object and the verbose flag and then schedules using FCFS based on the tag
         void fcfsSchedule(bool verbose, PCB_Class& pcb, int tag);
         
-
-    protected:
-
     private:
         // takes in a PCB_Class object and the verbose flag and then prints out the doneQueue
         void printOutput(bool verbose, PCB_Class& pcb);
