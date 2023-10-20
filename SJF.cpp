@@ -16,7 +16,7 @@ SJF::SJF(){
 SJF::~SJF(){
 }
 
-// handles SJF and SRTF sorting, sort calculations are then passed into print function
+
 void SJF::sjfSchedule(bool verbose, bool preemption, PCB_Class& pcb) {
     
     int cpuTime = 0;
@@ -41,15 +41,19 @@ void SJF::sjfSchedule(bool verbose, bool preemption, PCB_Class& pcb) {
 
         if (!pcb.queueEmpty(pcb.readyQueue)) {
             if (isProcessRunning) {
+                
+                // if statement that handles preemption
                 PCB_Class::PCB shortestJob = pcb.findTagPCB(pcb.readyQueue, pcb.BURST_TAG);
                 if (shortestJob.burstTime < currentProcess.burstTime) {
                     pcb.pushQueue(currentProcess, pcb.readyQueue);
                     currentProcess = shortestJob;
                     pcb.removeBlock(currentProcess, pcb.readyQueue);
+                    currentProcess.exitCounter++;
+                    cout << currentProcess.exitCounter;
                 }
             } 
             
-            // if there is no process running, frab from ready queue
+            // if there is no process running, grab from ready queue
             else {
                 currentProcess = pcb.findTagPCB(pcb.readyQueue, pcb.BURST_TAG);
                 pcb.removeBlock(currentProcess, pcb.readyQueue);
@@ -118,7 +122,7 @@ void SJF::printOutput(bool verbose, PCB_Class& pcb){
 
 
 void SJF::verboseOutput(PCB_Class::PCB block) {
-        cout << "\tCPU Entered: " << block.enterTime;
-        cout << "\tCPU Left: " << block.exitTime;
-
+    cout << "\tCPU Entered: " << block.enterTime;
+    cout << "\tCPU Left: " << block.exitTime << endl;
+     cout << "\tPreempted Amount: " << block.exitCounter;
 }

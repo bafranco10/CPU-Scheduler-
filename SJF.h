@@ -7,7 +7,6 @@
 
 #ifndef SJF_H
 #define SJF_H
-
 #include "PCB_Class.h"
 
 using namespace std;
@@ -15,16 +14,12 @@ using namespace std;
 class SJF{
 
     public:
-        SJF();
-        ~SJF();
+        SJF(); // Constructor
+        ~SJF(); // Destructor
 
         // takes in a PCB_Class object, the verbose flag, and the preemption flag and then schedules using SJF
         void sjfSchedule(bool verbose, bool preemption, PCB_Class& pcb);
         
-
-    protected:
-
-    private:
         // takes in a PCB_Class object and the verbose flag and then prints out the doneQueue
         void printOutput(bool verbose, PCB_Class& pcb);
 
