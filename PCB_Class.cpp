@@ -10,6 +10,8 @@
 #include <queue>
 #include <strings.h>
 
+
+
 using namespace std;
 
 PCB_Class::PCB_Class(){
@@ -192,6 +194,26 @@ void PCB_Class::removeBlock(PCB block, queue<PCB>& queue){
     }
 } 
 
+
+void PCB_Class::makeReadySJF(queue<PCB>& queue, int cpuTime){
+    int size = queueSize(queue);
+    PCB block;
+
+    // push the next available process in initQueue into readyQueue
+    for(int i=0;i<size;i++){
+        block = getPCB(queue);
+        if(block.arrivalTime <= cpuTime){
+            block.enterTime = cpuTime;  // Set the time when the process entered the readyQueue
+            pushQueue(block, readyQueue);
+            popQueue(queue);
+        }
+        else{
+            pushQueue(block, queue);
+            popQueue(queue);
+        }      
+    }
+} 
+
 void PCB_Class::printReadyQueue() {
   queue<PCB> tempQueue = readyQueue;
     
@@ -236,6 +258,7 @@ void PCB_Class::makeReadyRR(queue<PCB>& inputQueue, int cpuTime) {
         tempQueue.pop();
     }
 }
+
 void PCB_Class::printInitQueue() {
     // Iterate through the elements in the initQueue and print their contents
     cout << "Init Queue: ";
@@ -246,26 +269,7 @@ void PCB_Class::printInitQueue() {
         tempQueue.pop();
     }
     cout << endl;
-}
 
-void PCB_Class::makeReadySJF(queue<PCB>& queue, int cpuTime){
-    int size = queueSize(queue);
-    PCB block;
-
-    // push the next available process in initQueue into readyQueue
-    for(int i=0;i<size;i++){
-        block = getPCB(queue);
-        if(block.arrivalTime <= cpuTime){
-            block.enterTime = cpuTime;  // Set the time when the process entered the readyQueue
-            pushQueue(block, readyQueue);
-            popQueue(queue);
-        }
-        else{
-            pushQueue(block, queue);
-            popQueue(queue);
-        }      
-    }
-} 
 
 void PCB_Class::printDoneQueue() {
     // Iterate through the elements in the doneQueue and print their contents
@@ -278,5 +282,4 @@ void PCB_Class::printDoneQueue() {
     }
     cout << endl;
 }
-
 
