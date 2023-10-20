@@ -13,23 +13,23 @@
 using namespace std;
 
 class Priority{
-
-    public:
-        Priority();
-        ~Priority();
-
-        // takes in a PCB_Class object, the verbose flag, and the preemption flag and then schedules using Priority
-        void prioritySchedule(bool verbose, bool preemption, PCB_Class& pcb);
+  
+public:
+  Priority();
+  ~Priority();
+  
+  // takes in a PCB_Class object, the verbose flag, and the preemption flag and then schedules using Priority
+  void prioritySchedule(bool verbose, bool preemption, PCB_Class& pcb);
         
-
-    protected:
-
-    private:
-        // takes in a PCB_Class object and the verbose flag and then prints out the doneQueue
-        void printOutput(bool verbose, PCB_Class& pcb);
-
-        // takes in a PCB and prints out its CPU enter and exit times
-        void verboseOutput(PCB_Class::PCB block);
+  
+protected:
+  
+private:
+  // takes in a PCB_Class object and the verbose flag and then prints out the doneQueue
+        void printOutput(PCB_Class& pcb);
+  
+  // takes in a PCB and prints out its CPU enter and exit times
+  void verboseOutput(PCB_Class::PCB block);
 };
 
 #endif // PRIORITY_H
