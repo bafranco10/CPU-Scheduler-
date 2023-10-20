@@ -93,12 +93,6 @@ void SJF::sjfSchedule(bool verbose, bool preemption, PCB_Class& pcb) {
 }
 
 
-
-
-
-
-
-
 void SJF::printOutput(bool verbose, PCB_Class& pcb){
     
     PCB_Class::PCB block;
@@ -127,12 +121,9 @@ void SJF::printOutput(bool verbose, PCB_Class& pcb){
 
 
 void SJF::verboseOutput(PCB_Class::PCB block) {
-        << "\tCPU Entered: " << block.enterTime;
+        cout << "\tCPU Entered: " << block.enterTime;
         cout << "\tCPU Left: " << block.exitTime;
 
 }
-
-
-
 
 
