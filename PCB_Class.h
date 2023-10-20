@@ -25,25 +25,10 @@ class PCB_Class{
 
         queue<PCB> initQueue;
         queue<PCB> readyQueue;
-        queue<PCB> waitQueue;
         queue<PCB> doneQueue;
 
         PCB_Class();
-        ~PCB_Class();
-        void printInitQueue();
-        void printDoneQueue();
-        void makeReadySJF(queue<PCB>& queue, int cpuTime);    
-        // takes in a PCB line and puts it into newQueue, returns true on success
-        bool loadPCB(string fileLine);
-
-        // checks if the values in the given PCB are valid, returns false if no errors found
-        bool loadErrorCheck(PCB block);
-
-        // takes in a PCB line and puts it into newQueue, returns true on success
-        bool loadPCB(string fileLine);
-
-        // checks if the values in the given PCB are valid, returns false if no errors found
-        bool loadErrorCheck(PCB block);
+        ~PCB_Class();   
 
         // takes in a queue and a PCB and pushes the PCB into the end of the queue
         void pushQueue(PCB block, queue<PCB>& queue);
@@ -83,18 +68,14 @@ class PCB_Class{
 
         void makeReadySJF(queue<PCB>& queue, int cpuTime);
         
-        void printReadyQueue();
-  
-    protected:
+        void printReadyQueue(void);
+                
+        void printInitQueue(void);
+            
+        void printDoneQueue(void);
 
     private:
-        const char BLANK = ' ', UNDERLINE='_', TAB='\t';
-
         queue<PCB> sortQueue;
-
-        // returns the index of the first non-blank character in the given string starting at the given position
-        // returns -1 if only blanks are found
-        int skipBlanks(string& fileLine, int startPos);
 
 };
 
