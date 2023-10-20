@@ -21,6 +21,7 @@ class PCB_Class{
         struct PCB{
             int pid, priority, burstTime, arrivalTime;
             int waitTime,exitCounter,exitTime,enterTime;
+            int startingTime = -1;
             bool isFirst;
         };
 
@@ -68,6 +69,8 @@ class PCB_Class{
         // takes in a queue and cpuTime and then pushes the next available process
         void makeReady(queue<PCB>& queue, int cpuTime);
 
+        void makeReadySJF(queue<PCB>& queue, int cpuTime);    
+            
         void makeReadyRR(queue<PCB>& inputQueue, int cpuTime);
 
         void printReadyQueue();
