@@ -132,6 +132,26 @@ void PCB_Class::printReadyQueue() {
     }
 }
 
+void PCB_Class::makeReadySJF(queue<PCB>& queue, int cpuTime){
+    int size = queueSize(queue);
+    PCB block;
+
+    // push the next available process in initQueue into readyQueue
+    for(int i=0;i<size;i++){
+        block = getPCB(queue);
+        if(block.arrivalTime <= cpuTime){
+            block.enterTime = cpuTime;  // Set the time when the process entered the readyQueue
+            pushQueue(block, readyQueue);
+            popQueue(queue);
+            break;
+        }
+        else{
+            pushQueue(block, queue);
+            popQueue(queue);
+        }      
+    }
+} 
+
 void PCB_Class::makeReadyRR(queue<PCB>& inputQueue, int cpuTime) {
     int size = queueSize(inputQueue);
     bool first = true;  // Set the first element of tempQueue to true
