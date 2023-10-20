@@ -8,11 +8,9 @@
 #include <queue>
 
 roundRobin::roundRobin() {
-
 }
 
 roundRobin::~roundRobin() {
-    // Destructor
 }
 // takes in verbose a quantum and a set of PCB blocks
 // Returns each process wait time as well as prints queues necessary for debugging. 
@@ -40,16 +38,16 @@ void roundRobin::rrSchedule(bool verbose, int quantum, PCB_Class& pcb) {
         if (!pcb.queueEmpty(pcb.readyQueue)) {
             block = pcb.getPCB(pcb.readyQueue);
             if (verbose) {
-            cout << "P" << block.pid << " Enter " << cpuTime << endl;
-            pcb.printReadyQueue();
-        }
+                cout << "P_" << block.pid << " Enter: " << cpuTime;
+                pcb.printReadyQueue();
+            }
             // if burst time is greater than quantum calculate wait time and how much time is left for process to finish
             // also keep track of when the process left
             if (block.burstTime > quantum) {
                 block.burstTime -= quantum;
                 if (verbose) {
-                cout << "process: " << block.pid << " burst time:" << block.burstTime <<endl;
-            }
+                    cout << " Burst Left: " << block.burstTime;
+                }
 
                 calcWait(block, cpuTime);
 
@@ -77,38 +75,35 @@ void roundRobin::rrSchedule(bool verbose, int quantum, PCB_Class& pcb) {
                 pcb.popQueue(pcb.readyQueue);
             }
             if (verbose) {
-            cout << "P" << block.pid << " Exit " << block.exitTime << endl;
-        }
+                cout << " Exit: " << block.exitTime << endl;
+            }
         }
         // if readyQueue is empty increment cpuTime by 1 till another process is ready
-        else 
-            {
-                cpuTime++;
-                } 
+        else {
+            cpuTime++;
+        } 
     }
-    printOutput(verbose, pcb);
+    printOutput(pcb);
 }
 
-void roundRobin::printOutput(bool verbose, PCB_Class& pcb) {
-    if (!verbose) {
-        PCB_Class::PCB block;
-        int totalWait = 0, wait;
-        int processes = pcb.queueSize(pcb.doneQueue);
+void roundRobin::printOutput(PCB_Class& pcb) {
+    PCB_Class::PCB block;
+    int totalWait = 0, wait;
+    int processes = pcb.queueSize(pcb.doneQueue);
 
-        pcb.queueTagSort(pcb.doneQueue,pcb.PID_TAG);
+    pcb.queueTagSort(pcb.doneQueue,pcb.PID_TAG);
 
-        while (!pcb.queueEmpty(pcb.doneQueue)) {
-            block = pcb.getPCB(pcb.doneQueue);
-            cout << "\nP_" << block.pid;
+    while (!pcb.queueEmpty(pcb.doneQueue)) {
+        block = pcb.getPCB(pcb.doneQueue);
+        cout << "\nP_" << block.pid;
 
-            wait = block.waitTime;
-            totalWait += wait;
-            cout << "\tWait: " << wait;
+        wait = block.waitTime;
+        totalWait += wait;
+        cout << "\tWait: " << wait;
 
-            pcb.popQueue(pcb.doneQueue);
-        }
-        cout << "\n\tAverage Wait: " << (totalWait / (float)processes) << endl;
-    } 
+        pcb.popQueue(pcb.doneQueue);
+    }
+    cout << "\n\tAverage Wait: " << (totalWait / (float) processes) << endl;
 }
 
 // takes in a pcb block and a cpu time and returns the wait time 
