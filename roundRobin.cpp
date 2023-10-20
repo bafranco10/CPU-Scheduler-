@@ -108,9 +108,7 @@ void roundRobin::printOutput(bool verbose, PCB_Class& pcb) {
             pcb.popQueue(pcb.doneQueue);
         }
         cout << "\n\tAverage Wait: " << (totalWait / (float)processes) << endl;
-    } else {
-        verboseOutput();
-    }
+    } 
 }
 
 // takes in a pcb block and a cpu time and returns the wait time 
