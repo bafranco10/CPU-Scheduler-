@@ -67,14 +67,18 @@ int main(int argc, char **argv){
 		}
 	}
 	
+
+
+
 	if(!inputErrorCheck(flags, argv, type, quanta)){
+		string fileInput;
+		PCB_Class::PCB currentPCB;
+
 		inputFile.open(fileName);
+
 		if(inputFile){
+			inputFile >> fileInput;
 		    while(!inputFile.eof()){
-		        string fileInput;
-		    	PCB_Class::PCB currentPCB;
-		        
-		    	inputFile >> fileInput;
     			currentPCB.pid = atoi(fileInput.substr(2,fileInput.length()-1).c_str());
 
     			inputFile >> fileInput;
@@ -91,9 +95,10 @@ int main(int argc, char **argv){
 			    currentPCB.exitTime = 0;
 			    currentPCB.enterTime = 0;
 
+    			if(loadErrorCheck(currentPCB)) return 0;
     			pcb.pushQueue(currentPCB, pcb.initQueue);
 
-    			if(loadErrorCheck(currentPCB)) return 0;
+    			inputFile >> fileInput;
 			}
 			inputFile.close();
 		}
@@ -164,7 +169,7 @@ bool commandErrorCheck(int argc, char**argv){
 	}
 	else{
 		for(int i=1;i<argc;i++){
-			// if one of the inputs is not a valid option and does not come after an option with a parameter then error
+			// if one of the inputs is not a valid option and does not come after an option with a parameter then throw an error
 			if(argv[i] != TYPE && argv[i] != PREEMPTIVE && argv[i] != QUANTA && argv[i] != FILE_NAME && argv[i] != VERBOSE) {
 				if(argv[i-1] != TYPE && argv[i-1] != QUANTA && argv[i-1] != FILE_NAME){
 					cout << "\tERROR: " << argv[i] << " is not a valid option\n";
