@@ -170,7 +170,7 @@ void PCB_Class::makeReadyRR(queue<PCB>& inputQueue, int cpuTime) {
     }
 }
 
-void PCB_Class::printInitQueue(void) {
+void PCB_Class::printInitQueue() {
     // Iterate through the elements in the initQueue and print their contents
     cout << "Init Queue: ";
     queue<PCB> tempQueue = initQueue;
@@ -182,7 +182,7 @@ void PCB_Class::printInitQueue(void) {
     cout << endl;
 
 
-void PCB_Class::printDoneQueue(void) {
+void PCB_Class::printDoneQueue() {
     // Iterate through the elements in the doneQueue and print their contents
     cout << "Done Queue: ";
     queue<PCB> tempQueue = doneQueue;
@@ -194,7 +194,7 @@ void PCB_Class::printDoneQueue(void) {
     cout << endl;
 }
 
-void PCB_Class::printReadyQueue(void) {
+void PCB_Class::printReadyQueue() {
   queue<PCB> tempQueue = readyQueue;
     
     while (!tempQueue.empty()) {
